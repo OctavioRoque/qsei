@@ -168,7 +168,7 @@ class _BootstrapHomeScreen(ft.Column):
                     bgcolor={ft.ControlState.DEFAULT: Colors.BG_SURFACE,
                              ft.ControlState.HOVERED: Colors.BG_CARD},
                     shape=ft.RoundedRectangleBorder(radius=10),
-                    padding=ft.padding.symmetric(horizontal=20, vertical=12),
+                    padding=ft.Padding(left=20, top=12, right=20, bottom=12),
                 ),
                 width=400,
             )
@@ -235,31 +235,6 @@ def _make_home_module() -> None:
     mod.HomeScreen = HomeScreen
     sys.modules["ui.screens.home_screen"] = mod
 
-def _make_method_select_module() -> None:
-    """Módulo temporal para MethodSelectScreen."""
-    mod = types.ModuleType("ui.screens.method_select_screen")
-
-    class MethodSelectScreen(ft.Column):
-
-        def __init__(
-            self,
-            player_id,
-            on_start_session,
-            on_back,
-            router,
-            page,
-        ):
-
-            self.player_id = player_id
-            self.on_start_session = on_start_session
-            self.on_back = on_back
-            self.router = router
-            self.page = page
-
-            super().__init__()
-
-    mod.MethodSelectScreen = MethodSelectScreen
-    sys.modules["ui.screens.method_select_screen"] = mod
 
 def _make_summary_module() -> None:
     mod = types.ModuleType("ui.screens.summary_screen")
@@ -277,9 +252,8 @@ def main(page: ft.Page) -> None:
     # Inicializar DB
     DatabaseManager.get_instance()
 
-    # Registrar módulos placeholder
+    # Registrar módulos placeholder (home y summary siguen siendo stubs)
     _make_home_module()
-    _make_method_select_module()
     _make_summary_module()
 
     # Configurar página

@@ -87,7 +87,7 @@ class GameScreen(ft.Column):
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.symmetric(horizontal=Spacing.LG, vertical=Spacing.MD),
+            padding=ft.Padding(left=Spacing.LG, top=Spacing.MD, right=Spacing.LG, bottom=Spacing.MD),
             bgcolor=Colors.BG_SURFACE,
             border=ft.border.only(bottom=ft.BorderSide(1, Colors.BORDER)),
         )
@@ -117,7 +117,7 @@ class GameScreen(ft.Column):
                     spacing=Spacing.MD,
                     scroll=ft.ScrollMode.AUTO,
                 ),
-                padding=ft.padding.symmetric(horizontal=Spacing.LG, vertical=Spacing.MD),
+                padding=ft.Padding(left=Spacing.LG, top=Spacing.MD, right=Spacing.LG, bottom=Spacing.MD),
                 expand=True,
             ),
         ]
@@ -185,7 +185,7 @@ class GameScreen(ft.Column):
                         color=Colors.TEXT_SECONDARY,
                         italic=True,
                     ),
-                    padding=ft.padding.only(top=Spacing.SM),
+                    padding=ft.Padding(left=0, top=Spacing.SM, right=0, bottom=0),
                 )
             )
 
@@ -228,7 +228,7 @@ class GameScreen(ft.Column):
                     color=Colors.TEXT_PRIMARY,
                     side=ft.BorderSide(1, Colors.BORDER),
                     shape=ft.RoundedRectangleBorder(radius=Radius.SM),
-                    padding=ft.padding.symmetric(horizontal=20, vertical=12),
+                    padding=ft.Padding(left=20, top=12, right=20, bottom=12),
                 ),
                 on_click=lambda e: self._submit_answer(e.control.data),
             )

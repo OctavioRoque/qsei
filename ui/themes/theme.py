@@ -168,7 +168,7 @@ def primary_button(
     )
 
 
-def secondary_button(text: str, on_click, icons: str | None = None) -> ft.OutlinedButton:
+def secondary_button(text: str, on_click, icon: str | None = None) -> ft.OutlinedButton:
     return ft.OutlinedButton(
         text=text,
         icon=icon,
@@ -177,7 +177,7 @@ def secondary_button(text: str, on_click, icons: str | None = None) -> ft.Outlin
             color=Colors.PRIMARY,
             side=ft.BorderSide(1, Colors.PRIMARY),
             shape=ft.RoundedRectangleBorder(radius=Radius.SM),
-            padding=ft.padding.symmetric(horizontal=24, vertical=14),
+            padding=ft.Padding(left=24, top=14, right=24, bottom=14),
         ),
     )
 
@@ -194,7 +194,7 @@ def difficulty_badge(difficulty: int) -> ft.Container:
             color=Colors.BG_DARK,
         ),
         bgcolor=level.color_hex,
-        padding=ft.padding.symmetric(horizontal=10, vertical=4),
+        padding=ft.Padding(left=10, top=4, right=10, bottom=4),
         border_radius=Radius.XL,
     )
 
