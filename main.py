@@ -38,13 +38,8 @@ class AppRouter:
 
     def _show_home(self) -> None:
         """Pantalla de inicio / selección de perfil."""
-        from ui.screens.home_screen import HomeScreen
         self._page.controls.clear()
-        home = HomeScreen(
-            on_start_game=self._show_method_select,
-            on_create_profile=self._handle_create_profile,
-            page=self._page,
-        )
+        home = _BootstrapHomeScreen(self, self._page)
         self._page.add(home)
         self._page.update()
 
@@ -216,41 +211,11 @@ class _BootstrapHomeScreen(ft.Column):
         self._router._handle_create_profile(username, display_name)
 
 
-# ─── Módulos de pantalla placeholder (evitar ImportError) ────────────────────
-
-# home_screen.py — referenciado por AppRouter
-import sys, types
-
-def _make_home_module() -> None:
-    """Crea un módulo temporal para HomeScreen hasta implementarlo."""
-    mod = types.ModuleType("ui.screens.home_screen")
-
-    class HomeScreen(ft.Column):
-        def __init__(self, on_start_game, on_create_profile, page): pass
-
-    mod.HomeScreen = HomeScreen
-    sys.modules["ui.screens.home_screen"] = mod
-
-
-def _make_summary_module() -> None:
-    mod = types.ModuleType("ui.screens.summary_screen")
-
-    class SummaryScreen(ft.Column):
-        pass
-
-    mod.SummaryScreen = SummaryScreen
-    sys.modules["ui.screens.summary_screen"] = mod
-
-
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main(page: ft.Page) -> None:
     # Inicializar DB
     DatabaseManager.get_instance()
-
-    # Registrar módulos placeholder (home y summary siguen siendo stubs)
-    _make_home_module()
-    _make_summary_module()
 
     # Configurar página
     page.title = APP_NAME
