@@ -1,0 +1,200 @@
+[
+  {
+    "id": "p027",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuándo se aplica el método de Newton hacia Adelante?",
+    "solution": "Cuando las abscisas de los datos tienen IGUAL SEPARACIÓN (intervalos\n  uniformes): h = |x_{i+1} - x_i| = constante para todo i.",
+    "procedure": "Calcular h₁=|x₂-x₁|, h₂=|x₃-x₂|, etc. Si todos son iguales, se puede\n  usar Newton Adelante (o Newton Atrás). Si no, usar Diferencias Divididas."
+  },
+  {
+    "id": "p028",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Qué es el factor binomial 's' en Newton hacia Adelante?",
+    "solution": "s = (x - x_i) / h\n  Es una coordenada local que SIEMPRE debe ser POSITIVA.",
+    "procedure": "x_i es el primer dato de la tabla. h es el intervalo uniforme.\n  s indica cuántos intervalos h hay entre x_i y el punto x a interpolar.\n  Si s < 0, invertir el orden de los datos o usar Newton hacia Atrás."
+  },
+  {
+    "id": "p029",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "Define las diferencias hacia adelante de orden 0, 1 y 2.",
+    "solution": "Δ⁰f_i = f_i\n  Δ¹f_i = f_{i+1} - f_i        (diferencia de 1er orden)\n  Δ²f_i = Δ¹f_{i+1} - Δ¹f_i   (diferencia de 2do orden)",
+    "procedure": "Cada nivel de diferencias se calcula restando el valor de la\n  fila siguiente menos el de la fila actual en la misma columna."
+  },
+  {
+    "id": "p030",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son los 2 elementos necesarios para evaluar Newton hacia Adelante?",
+    "solution": "1) Tabla de coeficientes (diferencias) hacia adelante: Δ¹, Δ², Δ³, ...\n  2) Coeficientes binomiales:\n       C(s,0) = 1\n       C(s,1) = s\n       C(s,2) = s(s-1)/2!\n       C(s,3) = s(s-1)(s-2)/3!",
+    "procedure": "Los coeficientes binomiales ponderan cada nivel de diferencias\n  en la fórmula interpoladora de Newton."
+  },
+  {
+    "id": "p031",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "tabulation",
+    "tags": [
+      "F",
+      "T"
+    ],
+    "question": "Para x=[2,4,6], y=[3,7,13] con h=2, calcula Δ¹f₁, Δ¹f₂ y Δ²f₁.",
+    "solution": "Tabla:\n  | xi | yi | Δ¹  | Δ²  |\n  |----|----|----- |----|\n  | 2  | 3  | 4   | 2  |\n  | 4  | 7  | 6   |    |\n  | 6  | 13 |     |    |\n\n  Δ¹f₁ = y₂ - y₁ = 7 - 3 = 4\n  Δ¹f₂ = y₃ - y₂ = 13 - 7 = 6\n  Δ²f₁ = Δ¹f₂ - Δ¹f₁ = 6 - 4 = 2",
+    "procedure": "Diferencias de 1er orden: restar consecutivos en la columna y.\n  Diferencias de 2do orden: restar consecutivos en la columna Δ¹."
+  },
+  {
+    "id": "p032",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son los coeficientes binomiales C(s,0), C(s,1) y C(s,2)\nen Newton hacia Adelante?",
+    "solution": "C(s,0) = 1\n  C(s,1) = s\n  C(s,2) = s(s-1) / 2!  =  s(s-1)/2",
+    "procedure": "C(s,k) = s(s-1)(s-2)···(s-k+1) / k!\n  Cada coeficiente es el producto de k factores decrecientes,\n  dividido entre el factorial del orden k."
+  },
+  {
+    "id": "p033",
+    "topic": "newton_adelante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Qué significa que s debe ser POSITIVO en Newton hacia Adelante?",
+    "solution": "Significa que x (el punto a interpolar) debe estar a la DERECHA de x_i\n  (primer punto de la tabla), es decir x > x_i.\n  Si s < 0, hay que invertir el orden de los datos (de menor a mayor)\n  para que s sea positivo, o usar Newton hacia Atrás.",
+    "procedure": "s = (x - x_i)/h > 0 requiere x > x_i.\n  En Newton Atrás, x_i es el último dato y s resulta negativo."
+  },
+  {
+    "id": "p034",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Construye la tabla de diferencias hacia adelante para\nx=[1,2,3,4], y=[1,8,27,64] y determina el grado del polinomio subyacente.",
+    "solution": "Tabla de diferencias:\n  | x | y  | Δ¹ | Δ² | Δ³ |\n  |---|----|----|----|-----|\n  | 1 | 1  | 7  | 12 | 6  |\n  | 2 | 8  | 19 | 18 |    |\n  | 3 | 27 | 37 |    |    |\n  | 4 | 64 |    |    |    |\n\n  Δ¹: 8-1=7, 27-8=19, 64-27=37\n  Δ²: 19-7=12, 37-19=18\n  Δ³: 18-12=6 = constante\n\n  Como Δ³=6=constante → la función es un POLINOMIO DE GRADO 3.\n  (Confirmado: y=x³)",
+    "procedure": "Si la diferencia de orden k es constante, la función generadora\n  es un polinomio de grado k."
+  },
+  {
+    "id": "p035",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Para x=[2.2, 2.5, 2.8], y=[2.54, 2.82, 3.21], verifica que h es\nuniforme y calcula s para interpolar en x=2.4.",
+    "solution": "h₁ = |2.5 - 2.2| = 0.3\n  h₂ = |2.8 - 2.5| = 0.3\n  h₁ = h₂ = 0.3 → Intervalos UNIFORMES ✓\n\n  s = (x - x_i) / h = (2.4 - 2.2) / 0.3 = 0.2/0.3 = 0.6667",
+    "procedure": "x_i = 2.2 (primer dato). h = 0.3.\n  s = 0.6667 > 0 ✓ → Se puede usar Newton hacia Adelante."
+  },
+  {
+    "id": "p036",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Con los datos anteriores: x=[2.2,2.5,2.8], y=[2.54,2.82,3.21],\nh=0.3, s=0.6667. Construye la tabla de diferencias y calcula g(2.4).",
+    "solution": "Tabla de diferencias:\n  | xi  | yi   | Δ¹f  | Δ²f  |\n  |-----|------|------|------|\n  | 2.2 | 2.54 | 0.28 | 0.11 |\n  | 2.5 | 2.82 | 0.39 |      |\n  | 2.8 | 3.21 |      |      |\n\n  Δ¹f₁ = 2.82 - 2.54 = 0.28\n  Δ¹f₂ = 3.21 - 2.82 = 0.39\n  Δ²f₁ = 0.39 - 0.28 = 0.11\n\n  s = 0.6667\n  C(s,0) = 1\n  C(s,1) = 0.6667\n  C(s,2) = 0.6667 × (0.6667-1) / 2 = 0.6667 × (-0.3333) / 2 = -0.1111\n\n  g(2.4) = 2.54·(1) + 0.28·(0.6667) + 0.11·(-0.1111)\n          = 2.54 + 0.1867 - 0.0122\n          = 2.7145",
+    "procedure": "g(x) = y₁·C(s,0) + Δ¹f₁·C(s,1) + Δ²f₁·C(s,2)\n        = 2.54 + 0.1867 - 0.0122 = 2.7145"
+  },
+  {
+    "id": "p037",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "¿Qué pasa si quieres usar Newton Adelante con x=[5,4,3,2,1] para\ninterpolar en x=2.5?",
+    "solution": "Con x_i=5 (primer dato en orden decreciente):\n    s = (2.5 - 5) / 1 = -2.5 < 0  → NO se puede usar Newton Adelante.\n\n  SOLUCIÓN: Invertir el orden → x=[1,2,3,4,5], y valores correspondientes.\n  Ahora x_i=1, s=(2.5-1)/1=1.5 > 0 ✓",
+    "procedure": "Newton Adelante requiere s > 0. Si los datos están en orden decreciente,\n  se invierten los valores de x e y, o se usa directamente Newton Atrás."
+  },
+  {
+    "id": "p038",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "¿Cuántas diferencias de orden k se pueden calcular con n puntos?",
+    "solution": "Con n puntos hay (n - k) diferencias de orden k.\n  Con n=5 puntos:\n    4 diferencias de Δ¹\n    3 diferencias de Δ²\n    2 diferencias de Δ³\n    1 diferencia de Δ⁴",
+    "procedure": "Cada nivel reduce el número de diferencias en 1.\n  Con n=5 y k=3: 5-3=2 diferencias de 3er orden."
+  },
+  {
+    "id": "p039",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "prerequisite",
+    "tags": [
+      "M",
+      "C"
+    ],
+    "question": "¿Quieres usar Newton hacia Adelante? ¿Qué se necesita?",
+    "solution": "Se necesita:\n  1) Datos con intervalos UNIFORMES (h = constante).\n  2) Factor s = (x - x_i)/h POSITIVO (x_i = primer dato).\n  3) Tabla de diferencias hacia adelante (Δ¹, Δ², Δ³, ...).\n  4) Coeficientes binomiales: 1, s, s(s-1)/2!, s(s-1)(s-2)/3!, ...",
+    "procedure": "Verificar que h₁=h₂=...=constante.\n  Si los intervalos NO son uniformes → usar Newton Diferencias Divididas o Lagrange.\n  Si s < 0 → invertir orden de datos o usar Newton Atrás."
+  },
+  {
+    "id": "p040",
+    "topic": "newton_adelante",
+    "difficulty": 3,
+    "type": "tabulation",
+    "tags": [
+      "D",
+      "T"
+    ],
+    "question": "Para x=[0,1,2,3,4], y=[1,2,5,10,17], construye la tabla de diferencias\ncompleta (hasta Δ⁴) y calcula g(2.5) usando Newton hacia Adelante.",
+    "solution": "Tabla de diferencias:\n  | x | y  | Δ¹ | Δ² | Δ³ | Δ⁴ |\n  |---|----|----|----|----|----|\n  | 0 | 1  | 1  | 2  | 0  | 0  |\n  | 1 | 2  | 3  | 2  | 0  |    |\n  | 2 | 5  | 5  | 2  |    |    |\n  | 3 | 10 | 7  |    |    |    |\n  | 4 | 17 |    |    |    |    |\n\n  Δ¹: 1,3,5,7.  Δ²: 2,2,2.  Δ³: 0,0.  Δ⁴: 0.\n  Como Δ³=0 → la función es polinomio de grado 2 (y = x²+1).\n\n  s = (2.5 - 0)/1 = 2.5\n  C(s,0) = 1\n  C(s,1) = 2.5\n  C(s,2) = 2.5·1.5/2 = 1.875\n  C(s,3) = 2.5·1.5·0.5/6 = 0.3125   (pero Δ³=0, no contribuye)\n\n  g(2.5) = 1·(1) + 1·(2.5) + 2·(1.875) + 0 + 0\n          = 1 + 2.5 + 3.75 = 7.25",
+    "procedure": "Verificar: f(2.5) = (2.5)²+1 = 6.25+1 = 7.25 ✓ Exacto porque\n  los datos provienen de un polinomio de grado 2."
+  },
+  {
+    "id": "p041",
+    "topic": "newton_adelante",
+    "difficulty": 3,
+    "type": "open",
+    "tags": [
+      "D"
+    ],
+    "question": "¿Qué significa que Δ^(n+1)=0 en la tabla de diferencias?",
+    "solution": "Significa que el polinomio interpolador de grado n es EXACTO para\n  los datos. Los datos provienen de un polinomio de grado exactamente n,\n  y términos adicionales no mejorarán la aproximación (son todos cero).",
+    "procedure": "Si Δ^k=0 para todo k>n, la función generadora es un polinomio de grado n.\n  La fórmula de Newton se trunca naturalmente en el grado correcto.\n  Esto permite identificar el grado del polinomio que generó los datos."
+  },
+  {
+    "id": "p042",
+    "topic": "newton_adelante",
+    "difficulty": 2,
+    "type": "analysis",
+    "tags": [
+      "S"
+    ],
+    "question": "¿Qué método usar si los datos tienen h=2 entre los primeros 3 puntos\ny h=3 entre los siguientes?",
+    "solution": "Los intervalos NO son uniformes (2 ≠ 3).\n  Por tanto NO se puede usar Newton Adelante ni Newton Atrás.\n\n  OPCIONES:\n  a) Newton con Diferencias Divididas (funciona con cualquier distribución).\n  b) Lagrange (también funciona con cualquier distribución).\n  c) Si se desea usar Newton Adelante/Atrás, habría que REDEFINIR\n     los puntos con h uniforme (pero esto implicaría calcular nuevos\n     puntos intermedios con otra interpolación, lo cual es circular).\n\n  JUSTIFICACIÓN:\n  La condición de intervalos iguales es NECESARIA para Newton Adelante/Atrás.\n  Sin esta condición, las fórmulas de diferencias no son válidas.\n\n================================================================================\nSECCIÓN 4 – INTERPOLACIÓN DE NEWTON HACIA ATRÁS\n================================================================================",
+    "procedure": ""
+  }
+]

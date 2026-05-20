@@ -65,15 +65,11 @@ class AppRouter:
 
     def _show_game(self, player_id: int, method_key: str, difficulty: int) -> None:
         """Pantalla de juego activo."""
-        from engine.nonlinear.bisection import BisectionGenerator
+        from game.questions.bank_generator import BankGenerator
         from game.sessions.session_manager import GameSession
         from ui.screens.game_screen import GameScreen
 
-        generator_map = {
-            "biseccion": BisectionGenerator(),
-            # más métodos se agregan aquí
-        }
-        generator = generator_map.get(method_key, BisectionGenerator())
+        generator = BankGenerator(topic=method_key, total=15)
 
         session = GameSession(
             player_id=player_id,

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "p223",
+    "topic": "runge_kutta_3",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son las fórmulas de RK-3?",
+    "solution": "k₁ = h·f(y_n, t_n)\n  k₂ = h·f(y_n+k₁/2, t_n+h/2)\n  k₃ = h·f(y_n-k₁+2k₂, t_n+h)\n  y_{n+1} = y_n + (1/6)(k₁+4k₂+k₃)",
+    "procedure": "Pesos 1,4,1 son de Simpson 1/3 con 3 puntos. Error local O(h⁴)."
+  },
+  {
+    "id": "p224",
+    "topic": "runge_kutta_3",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Para y'=(2yt+1)/y², y₀=1, h=0.25. Calcula k₁,k₂,k₃ y y₁ con RK-3.",
+    "solution": "f(y,t)=(2yt+1)/y²\n\n  k₁ = 0.25·(0+1)/1 = 0.25000\n  k₂ = 0.25·f(1.125, 0.125)\n     = 0.25·(2·1.125·0.125+1)/(1.125)²\n     = 0.25·1.28125/1.26563 = 0.25309\n  k₃ = 0.25·f(1.25618, 0.25)\n     = 0.25·(2·1.25618·0.25+1)/(1.25618)²\n     = 0.25·1.62809/1.57799 = 0.25794\n\n  y₁ = 1+(1/6)(0.25+4·0.25309+0.25794)\n     = 1+(1/6)(1.52030) = 1.25338",
+    "procedure": "k₃ usa y₀-k₁+2k₂ = 1-0.25+2(0.25309) = 1.25618.\n\n================================================================================\nSECCIÓN 32 – RUNGE-KUTTA 4to ORDEN (1/3 de Simpson)\n================================================================================"
+  }
+]

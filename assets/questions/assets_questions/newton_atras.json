@@ -1,0 +1,138 @@
+[
+  {
+    "id": "p043",
+    "topic": "newton_atras",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la diferencia principal entre Newton Adelante y Newton Atrás?",
+    "solution": "Newton Adelante:  x_i = PRIMER dato,  s = (x-x_i)/h > 0\n  Newton Atrás:     x_i = ÚLTIMO dato,  s = (x-x_i)/h < 0",
+    "procedure": "Newton Atrás usa diferencias hacia atrás (∇) en lugar de hacia adelante (Δ).\n  El factor s siempre resulta negativo porque x < x_i (último dato)."
+  },
+  {
+    "id": "p044",
+    "topic": "newton_atras",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "Define la diferencia hacia atrás de primer orden ∇¹f_i.",
+    "solution": "∇¹f_i = f_i - f_{i-1}   (valor actual menos valor anterior)",
+    "procedure": "En la tabla de diferencias de Newton Atrás, se resta el valor\n  de la fila superior al de la fila inferior (de abajo hacia arriba)."
+  },
+  {
+    "id": "p045",
+    "topic": "newton_atras",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son los coeficientes binomiales en Newton hacia Atrás para\nC(s,0), C(s,1) y C(s,2)?",
+    "solution": "C(s,0) = 1\n  C(s,1) = s\n  C(s,2) = s(s+1) / 2!    ← nótese el signo + (vs Newton Adelante que tiene -)",
+    "procedure": "Newton Adelante: s(s-1)/2!.  Newton Atrás: s(s+1)/2!.\n  Los signos dentro de los factores se invierten entre los dos métodos."
+  },
+  {
+    "id": "p046",
+    "topic": "newton_atras",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "Para x=[2.2, 2.5, 2.8], y=[2.54, 2.82, 3.21] y h=0.3,\ncalcula s para x=2.4 con Newton hacia Atrás.",
+    "solution": "x_i = 2.8 (ÚLTIMO dato)\n  s = (x - x_i) / h = (2.4 - 2.8) / 0.3 = -0.4/0.3 = -1.333",
+    "procedure": "En Newton Atrás, x_i es el ÚLTIMO valor de la tabla.\n  s = -1.333 < 0, lo cual es esperado y correcto."
+  },
+  {
+    "id": "p047",
+    "topic": "newton_atras",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Qué es x_i en Newton hacia Atrás?",
+    "solution": "x_i es el ÚLTIMO valor de x en la tabla de datos\n  (el dato de mayor valor en orden ascendente).",
+    "procedure": "A diferencia de Newton Adelante donde x_i es el primer dato,\n  en Newton Atrás x_i es el último dato, y s resulta negativo\n  porque el punto a interpolar x < x_i."
+  },
+  {
+    "id": "p048",
+    "topic": "newton_atras",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Construye la tabla de diferencias hacia atrás para\nx=[2.2, 2.5, 2.8], y=[2.54, 2.82, 3.21].",
+    "solution": "| xi  | yi   | ∇¹f(xi) | ∇²f(xi) |\n  |-----|------|---------|---------|\n  | 2.2 | 2.54 |         |         |\n  | 2.5 | 2.82 | 0.28    |         |\n  | 2.8 | 3.21 | 0.39    | 0.11    |\n\n  ∇¹f(2.5) = 2.82 - 2.54 = 0.28\n  ∇¹f(2.8) = 3.21 - 2.82 = 0.39\n  ∇²f(2.8) = 0.39 - 0.28 = 0.11",
+    "procedure": "En Newton Atrás, las diferencias se colocan junto al dato INFERIOR.\n  ∇²f se calcula en el último dato y es el que se usa directamente\n  en la fórmula junto con x_i=2.8."
+  },
+  {
+    "id": "p049",
+    "topic": "newton_atras",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Calcula g(2.4) con Newton hacia Atrás para los datos anteriores.\nx_i=2.8, s=-1.333, ∇¹f=0.39, ∇²f=0.11.",
+    "solution": "C(s,0) = 1\n  C(s,1) = s = -1.333\n  C(s,2) = s(s+1)/2 = (-1.333)(-1.333+1)/2 = (-1.333)(-0.333)/2 = 0.2221\n\n  g(2.4) = y_i·C(s,0) + ∇¹f_i·C(s,1) + ∇²f_i·C(s,2)\n          = 3.21·(1) + 0.39·(-1.333) + 0.11·(0.2221)\n          = 3.21 - 0.5199 + 0.0244\n          = 2.7145",
+    "procedure": "Mismo resultado que Newton Adelante (2.7145), confirmando la unicidad\n  del polinomio interpolador. Los dos métodos producen el mismo polinomio."
+  },
+  {
+    "id": "p050",
+    "topic": "newton_atras",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "¿Por qué Newton Adelante y Newton Atrás dan el mismo resultado\npara los mismos datos?",
+    "solution": "Porque ambos generan el MISMO y ÚNICO polinomio de grado n que pasa\n  por n+1 puntos dados. La representación matemática difiere\n  pero el polinomio resultante es idéntico.",
+    "procedure": "Teorema de unicidad: dados n+1 puntos, existe exactamente un polinomio\n  de grado ≤ n que los interpola. Cualquier método correcto de interpolación\n  que use los mismos puntos debe producir ese mismo polinomio único."
+  },
+  {
+    "id": "p051",
+    "topic": "newton_atras",
+    "difficulty": 2,
+    "type": "prerequisite",
+    "tags": [
+      "M",
+      "C"
+    ],
+    "question": "¿Quieres usar Newton hacia Atrás? ¿Qué se necesita?",
+    "solution": "Se necesita:\n  1) Datos con intervalos UNIFORMES (h = constante).\n  2) Factor s = (x - x_i)/h NEGATIVO (x_i = ÚLTIMO dato).\n  3) Tabla de diferencias hacia atrás (∇¹, ∇², ∇³, ...).\n  4) Coeficientes binomiales con signos +:\n       s,  s(s+1)/2!,  s(s+1)(s+2)/3!, ...",
+    "procedure": "Si s > 0 con Newton Atrás, se está extrapolando (x > x_i = último dato).\n  Si los datos NO son uniformes → usar Diferencias Divididas o Lagrange."
+  },
+  {
+    "id": "p052",
+    "topic": "newton_atras",
+    "difficulty": 3,
+    "type": "open",
+    "tags": [
+      "D"
+    ],
+    "question": "Si en Newton hacia Atrás obtienes s > 0, ¿qué significa y qué hacer?",
+    "solution": "s = (x - x_i)/h > 0 significa que x > x_i (el punto a interpolar\n  está más allá del ÚLTIMO dato). Es EXTRAPOLACIÓN, no interpolación.\n\n  OPCIONES:\n  a) Usar Newton Adelante con el extremo correcto como x_i.\n  b) Reconocer que es extrapolación y asumir mayor incertidumbre.\n  c) Revisar si el punto x estaba dentro del rango de los datos.",
+    "procedure": "Newton Atrás está diseñado para s ≤ 0. Si s > 0 con Newton Atrás,\n  hay un error en la selección del x_i o se está extrapolando fuera\n  del rango de los datos disponibles."
+  },
+  {
+    "id": "p053",
+    "topic": "newton_atras",
+    "difficulty": 3,
+    "type": "tabulation",
+    "tags": [
+      "D",
+      "T"
+    ],
+    "question": "Con x=[0.0, 0.1, 0.2, 0.3, 0.4], y=[1.0000, 1.1052, 1.2214, 1.3499, 1.4918]\n(función e^x), calcula e^0.25 usando Newton hacia Atrás.",
+    "solution": "Tabla de diferencias hacia atrás:\n  ∇¹: 0.1052, 0.1162, 0.1285, 0.1419\n  ∇²: 0.0110, 0.0123, 0.0134\n  ∇³: 0.0013, 0.0011\n  ∇⁴: -0.0002\n\n  x_i = 0.4,  h = 0.1,  s = (0.25 - 0.4)/0.1 = -1.5\n\n  C(s,0) = 1\n  C(s,1) = -1.5\n  C(s,2) = (-1.5)(-0.5)/2 = 0.375\n  C(s,3) = (-1.5)(-0.5)(0.5)/6 = 0.0625\n  C(s,4) = (-1.5)(-0.5)(0.5)(1.5)/24 = 0.02344\n\n  g(0.25) = 1.4918 + 0.1419(-1.5) + 0.0134(0.375)\n            + 0.0011(0.0625) + (-0.0002)(0.02344)\n          = 1.4918 - 0.2129 + 0.005025 + 0.0000688 - 0.0000047\n          ≈ 1.2840\n\n  Valor real: e^0.25 = 1.2840 ✓  Error ≈ 0",
+    "procedure": "s = -1.5. Aplicar la fórmula de Newton Atrás hasta ∇⁴.\n  El resultado es prácticamente exacto con 5 puntos de evaluación.\n\n================================================================================\nSECCIÓN 5 – NEWTON CON DIFERENCIAS DIVIDIDAS\n================================================================================"
+  }
+]

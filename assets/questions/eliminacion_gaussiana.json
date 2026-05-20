@@ -1,0 +1,89 @@
+[
+  {
+    "id": "p137",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son las 3 operaciones de renglón permitidas en Eliminación Gaussiana?",
+    "solution": "1) Multiplicar toda una fila por una constante distinta de cero.\n  2) Sumar o restar un múltiplo de una ecuación a otra.\n  3) Intercambiar de posición dos ecuaciones (filas).",
+    "procedure": "Estas operaciones elementales de fila no cambian el conjunto de soluciones\n  del sistema. Son equivalentes a transformaciones algebraicas válidas."
+  },
+  {
+    "id": "p138",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Qué forma tiene la matriz al final de Eliminación Gaussiana?",
+    "solution": "Forma TRIANGULAR SUPERIOR: todos los elementos debajo de la diagonal son cero.\n  La última ecuación contiene solo la última variable.",
+    "procedure": "Desde la última ecuación (una sola variable) se va sustituyendo hacia arriba\n  (sustitución hacia atrás) para encontrar todas las variables."
+  },
+  {
+    "id": "p139",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Qué es la \"sustitución hacia atrás\" en Eliminación Gaussiana?",
+    "solution": "Una vez obtenida la forma triangular superior:\n  1) Se resuelve la última ecuación (tiene solo la última variable).\n  2) Se sustituye el valor en la penúltima ecuación.\n  3) Se continúa subiendo hasta obtener todas las variables.",
+    "procedure": "Si xₙ se obtiene de la última ecuación, se sustituye en la\n  antepenúltima para calcular xₙ₋₁, y así sucesivamente."
+  },
+  {
+    "id": "p140",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Resuelve 2x₁+x₂-3x₃=-1, -x₁+3x₂+2x₃=12, 3x₁+x₂-3x₃=0\npor Eliminación Gaussiana.",
+    "solution": "Matriz aumentada:\n  | 2  |  1 | -3 | -1 |\n  | -1 |  3 |  2 | 12 |\n  | 3  |  1 | -3 |  0 |\n\n  Eliminar x₁ de F₂ y F₃:\n  F₂ = F₂ + (1/2)F₁:\n  | 2  |  1   | -3   | -1   |\n  | 0  |  7/2 |  1/2 | 23/2 |\n  | 3  |  1   | -3   |  0   |\n\n  F₃ = F₃ - (3/2)F₁:\n  | 2  |  1   | -3   |  -1   |\n  | 0  |  7/2 |  1/2 |  23/2 |\n  | 0  | -1/2 |  3/2 |   3/2 |\n\n  Eliminar x₂ de F₃:\n  F₃ = F₃ + (1/7)F₂:\n  | 2 |  1   | -3   |  -1  |\n  | 0 |  7/2 |  1/2 | 23/2 |\n  | 0 |   0  | 11/7 | 22/7 |\n\n  Sustitución hacia atrás:\n    x₃ = (22/7) / (11/7) = 2\n    (7/2)x₂ = 23/2 - (1/2)(2) = 23/2 - 1 = 21/2  →  x₂ = 3\n    2x₁ = -1 - x₂ + 3x₃ = -1 - 3 + 6 = 2  →  x₁ = 1\n\n  Solución: x₁=1, x₂=3, x₃=2",
+    "procedure": "Verificación:\n    2(1)+3-3(2) = 2+3-6 = -1 ✓\n    -1+3(3)+2(2) = -1+9+4 = 12 ✓\n    3(1)+3-3(2) = 3+3-6 = 0 ✓"
+  },
+  {
+    "id": "p141",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Resuelve el sistema x+y=3, 2x+2y=7 con Eliminación Gaussiana. ¿Qué ocurre?",
+    "solution": "Matriz augmentada: [1 1|3; 2 2|7]\n\n  F₂ = F₂ - 2·F₁: [2-2, 2-2 | 7-6] = [0, 0 | 1]\n\n  La ecuación resultante: 0·x + 0·y = 1 → 0 = 1  (IMPOSIBLE)\n\n  El sistema NO tiene solución (sistema INCONSISTENTE).",
+    "procedure": "Las dos ecuaciones son paralelas (misma pendiente m=1, diferente intercepto).\n  El proceso Gaussiano detecta la inconsistencia al producir la fila [0 0 | c≠0]."
+  },
+  {
+    "id": "p142",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 2,
+    "type": "prerequisite",
+    "tags": [
+      "M",
+      "C"
+    ],
+    "question": "¿Quieres usar Eliminación Gaussiana? ¿Qué se necesita?",
+    "solution": "Se necesita:\n  1) Sistema de ecuaciones lineales n×n.\n  2) Construir la matriz aumentada [A|b].\n  3) Aplicar operaciones de fila para obtener forma triangular superior.\n  4) Aplicar sustitución hacia atrás para encontrar las variables.",
+    "procedure": "Ventaja: eficiente, requiere n(n-1)/2 eliminaciones.\n  Si un pivote es cero → intercambiar filas (pivoteo parcial).\n  Si aparece [0 0|c≠0] → sin solución. Si [0 0|0] → infinitas soluciones."
+  },
+  {
+    "id": "p143",
+    "topic": "eliminacion_gaussiana",
+    "difficulty": 3,
+    "type": "open",
+    "tags": [
+      "D"
+    ],
+    "question": "¿Cuándo puede fallar la Eliminación Gaussiana y cómo se soluciona?",
+    "solution": "FALLA cuando el elemento pivote es CERO o muy pequeño.\n  - Pivote=0: división por cero (imposible).\n  - Pivote≈0: amplificación de errores de redondeo (inestabilidad numérica).\n\n  SOLUCIÓN: PIVOTEO PARCIAL.\n  En cada columna, buscar el elemento de mayor valor absoluto y\n  intercambiar esa fila con la fila pivote actual.",
+    "procedure": "Ejemplo: sistema con a₁₁=0 o muy pequeño.\n  Buscar max|a_{i1}| para i=1,...,n.\n  Intercambiar la fila de ese máximo con la fila 1.\n  El pivoteo parcial mejora drásticamente la estabilidad numérica.\n\n================================================================================\nSECCIÓN 16 – MÉTODO DE GAUSS-SEIDEL\n================================================================================"
+  }
+]

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "p054",
+    "topic": "diferencias_divididas",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuándo se aplica Newton con Diferencias Divididas?",
+    "solution": "Cuando los intervalos entre datos son NO UNIFORMES:\n  h₁ ≠ h₂ ≠ ... ≠ h_{n-1}",
+    "procedure": "Si |x₂-x₁| ≠ |x₃-x₂|, los métodos Newton Adelante/Atrás no aplican.\n  Se usan Newton con Diferencias Divididas o Lagrange."
+  },
+  {
+    "id": "p055",
+    "topic": "diferencias_divididas",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la fórmula de la primera diferencia dividida D¹?",
+    "solution": "D¹₁ = (y₂ - y₁) / (x₂ - x₁)",
+    "procedure": "Es la pendiente de la recta que une (x₁,y₁) y (x₂,y₂).\n  También se denota como f[x₁,x₂]."
+  },
+  {
+    "id": "p056",
+    "topic": "diferencias_divididas",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la fórmula general de Newton con Diferencias Divididas para 3 puntos?",
+    "solution": "g(x) = D⁰ + D¹(x - x₁) + D²(x - x₁)(x - x₂)\n\n  Donde:\n    D⁰ = y₁\n    D¹ = (y₂ - y₁) / (x₂ - x₁)\n    D² = (D¹₂ - D¹₁) / (x₃ - x₁)",
+    "procedure": "Cada término añade un grado de corrección a la aproximación anterior.\n  D⁰ es constante, D¹ añade linealidad, D² añade curvatura."
+  },
+  {
+    "id": "p057",
+    "topic": "diferencias_divididas",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "Para x=[1, 3, 6], y=[2, 8, 11], calcula D¹₁ y D¹₂.",
+    "solution": "D¹₁ = (y₂ - y₁) / (x₂ - x₁) = (8 - 2) / (3 - 1) = 6/2 = 3\n  D¹₂ = (y₃ - y₂) / (x₃ - x₂) = (11 - 8) / (6 - 3) = 3/3 = 1",
+    "procedure": "Cada diferencia dividida de primer orden es la pendiente entre dos puntos.\n  D¹₁ es la pendiente entre (1,2) y (3,8).\n  D¹₂ es la pendiente entre (3,8) y (6,11)."
+  },
+  {
+    "id": "p058",
+    "topic": "diferencias_divididas",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "Para x=[1,3,6], y=[2,8,11] con D¹₁=3, D¹₂=1, calcula D²₁.",
+    "solution": "D²₁ = (D¹₂ - D¹₁) / (x₃ - x₁)\n       = (1 - 3) / (6 - 1)\n       = -2 / 5 = -0.4",
+    "procedure": "El denominador usa los x 'no comunes' en el numerador: x₃ y x₁\n  (los extremos del trío de puntos usados para calcular D¹₁ y D¹₂)."
+  },
+  {
+    "id": "p059",
+    "topic": "diferencias_divididas",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Tabula y calcula g(4) para x=[1,3,6], y=[2,8,11]\nusando Newton con Diferencias Divididas.",
+    "solution": "Tabla de diferencias divididas:\n  | xi | yi | D¹   | D²   |\n  |----|-----|------|------|\n  | 1  | 2   | 3    | -0.4 |\n  | 3  | 8   | 1    |      |\n  | 6  | 11  |      |      |\n\n  D⁰ = 2,  D¹ = 3,  D² = -0.4\n\n  g(4) = D⁰ + D¹(4 - x₁) + D²(4 - x₁)(4 - x₂)\n       = 2 + 3(4 - 1) + (-0.4)(4 - 1)(4 - 3)\n       = 2 + 9 + (-0.4)(3)(1)\n       = 2 + 9 - 1.2 = 9.8",
+    "procedure": "Sustituir x=4 en la fórmula de Newton con Diferencias Divididas.\n  g(4) = 2 + 3(3) + (-0.4)(3)(1) = 9.8"
+  },
+  {
+    "id": "p060",
+    "topic": "diferencias_divididas",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Verifica si x=[4.4, 3.7, 3.1], y=[-0.68, -1.59, -1.82] tiene intervalos\nuniformes. ¿Qué método debe usarse?",
+    "solution": "h₁ = |3.7 - 4.4| = 0.7\n  h₂ = |3.1 - 3.7| = 0.6\n  h₁ = 0.7 ≠ h₂ = 0.6 → Intervalos NO UNIFORMES.\n\n  Debe usarse Newton con Diferencias Divididas o Lagrange.",
+    "procedure": "Si h₁ ≠ h₂, los métodos Newton Adelante y Newton Atrás NO aplican.\n  Diferencias Divididas y Lagrange funcionan con cualquier distribución de puntos."
+  },
+  {
+    "id": "p061",
+    "topic": "diferencias_divididas",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Para x=[4.4, 3.7, 3.1], y=[-0.68, -1.59, -1.82], construye la tabla\nde diferencias divididas y calcula g(3.5).",
+    "solution": "D¹₁ = (-1.59 - (-0.68)) / (3.7 - 4.4) = -0.91 / (-0.7) = 1.3\n  D¹₂ = (-1.82 - (-1.59)) / (3.1 - 3.7) = -0.23 / (-0.6) = 0.3833\n  D²  = (0.3833 - 1.3) / (3.1 - 4.4) = (-0.9167) / (-1.3) = 0.7051\n\n  Tabla:\n  | xi  | yi    | D¹     | D²     |\n  |-----|-------|--------|--------|\n  | 4.4 | -0.68 | 1.3    | 0.7051 |\n  | 3.7 | -1.59 | 0.3833 |        |\n  | 3.1 | -1.82 |        |        |\n\n  g(3.5) = -0.68 + 1.3(3.5 - 4.4) + 0.7051(3.5 - 4.4)(3.5 - 3.7)\n          = -0.68 + 1.3(-0.9) + 0.7051(-0.9)(-0.2)\n          = -0.68 - 1.17 + 0.1269\n          = -1.723",
+    "procedure": "Verificación: g(3.5) = -1.723 debe estar entre -1.59 y -1.82 ✓\n  El resultado está dentro del rango esperado."
+  },
+  {
+    "id": "p062",
+    "topic": "diferencias_divididas",
+    "difficulty": 2,
+    "type": "prerequisite",
+    "tags": [
+      "M",
+      "C"
+    ],
+    "question": "¿Quieres usar Newton con Diferencias Divididas? ¿Qué se necesita?",
+    "solution": "Se necesita:\n  1) Datos con intervalos NO UNIFORMES (h₁ ≠ h₂, etc.).\n  2) Calcular las diferencias divididas: D⁰, D¹, D², D³, ...\n  3) El punto x donde se desea interpolar.",
+    "procedure": "También funciona con intervalos uniformes, pero en ese caso Newton\n  Adelante/Atrás son más eficientes. Diferencias Divididas es más general.\n  La tabla de diferencias divididas se construye columna a columna."
+  },
+  {
+    "id": "p063",
+    "topic": "diferencias_divididas",
+    "difficulty": 3,
+    "type": "tabulation",
+    "tags": [
+      "D",
+      "T"
+    ],
+    "question": "Para x=[1.0, 1.3, 1.6, 1.9, 2.2] y f(x)=[0.7652, 0.6201, 0.4554, 0.2818, 0.1104]\n(función de Bessel), calcula f(1.5) con Diferencias Divididas.",
+    "solution": "Diferencias de primer orden D¹:\n    D¹₁ = (0.6201-0.7652)/(1.3-1.0) = -0.4837\n    D¹₂ = (0.4554-0.6201)/(1.6-1.3) = -0.5490\n    D¹₃ = (0.2818-0.4554)/(1.9-1.6) = -0.5787\n    D¹₄ = (0.1104-0.2818)/(2.2-1.9) = -0.5713\n\n  Diferencias de segundo orden D²:\n    D²₁ = (-0.5490-(-0.4837))/(1.6-1.0) = -0.1088\n    D²₂ = (-0.5787-(-0.5490))/(1.9-1.3) = -0.0495\n    D²₃ = (-0.5713-(-0.5787))/(2.2-1.6) = 0.0123\n\n  Diferencias de tercer orden D³:\n    D³₁ = (-0.0495-(-0.1088))/(1.9-1.0) = 0.0659\n    D³₂ = (0.0123-(-0.0495))/(2.2-1.3) = 0.0687\n\n  Diferencias de cuarto orden D⁴:\n    D⁴₁ = (0.0687-0.0659)/(2.2-1.0) = 0.0023\n\n  g(1.5) = 0.7652 + (-0.4837)(1.5-1.0) + (-0.1088)(0.5)(0.2)\n           + 0.0659(0.5)(0.2)(-0.1) + 0.0023(0.5)(0.2)(-0.1)(-0.4)\n         = 0.7652 - 0.2419 - 0.010880 - 0.000659 + 0.0000092\n         ≈ 0.5118\n\n  Valor real: f(1.5) = 0.5118 ✓  Error ≈ 0",
+    "procedure": "Con 5 puntos se obtiene un polinomio de grado 4. El resultado es\n  prácticamente exacto para la función de Bessel de orden cero.\n\n================================================================================\nSECCIÓN 6 – INTERPOLACIÓN DE LAGRANGE\n================================================================================"
+  }
+]

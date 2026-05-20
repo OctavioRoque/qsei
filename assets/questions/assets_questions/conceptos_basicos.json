@@ -1,0 +1,110 @@
+[
+  {
+    "id": "p001",
+    "topic": "conceptos_basicos",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son las dos causas principales de errores en cálculos numéricos?",
+    "solution": "1) Error de TRUNCAMIENTO: originado por las aproximaciones en la fórmula\n     matemática (modelo). Surge al cortar una serie infinita.\n  2) Error de REDONDEO: asociado al número limitado de dígitos con que se\n     representan los números en la computadora.",
+    "procedure": "El error de truncamiento proviene de truncar la Serie de Taylor en un número\n  finito de términos. El error de redondeo es inherente a la representación\n  binaria finita de los números reales."
+  },
+  {
+    "id": "p002",
+    "topic": "conceptos_basicos",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la fórmula general de la Serie de Taylor?",
+    "solution": "f(x) = Σ [ f^(n)(a) / n! ] · (x - a)^n   para n = 0, 1, 2, 3, ...\n       = f(a) + f'(a)(x-a) + f''(a)(x-a)²/2! + f'''(a)(x-a)³/3! + ...",
+    "procedure": "Cada término usa la n-ésima derivada de f evaluada en el punto 'a'.\n  La serie converge si la función es analítica en un entorno de 'a'."
+  },
+  {
+    "id": "p003",
+    "topic": "conceptos_basicos",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son las 2 ventajas de representar una función con Serie de Taylor?",
+    "solution": "1) La derivación e integración se realiza término a término (operaciones\n     algebraicas triviales).\n  2) Se puede usar para calcular valores aproximados de la función con\n     el grado de precisión que se requiera.",
+    "procedure": "La representación en serie permite manipulación algebraica sencilla\n  y aproximación numérica controlada al truncar en el término deseado."
+  },
+  {
+    "id": "p004",
+    "topic": "conceptos_basicos",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "Escribe los primeros 4 términos de la Serie de Taylor de e^x alrededor de x=0.",
+    "solution": "f(x) = e^x,  f^(n)(0) = e^0 = 1 para todo n\n  e^x = 1 + x + x²/2! + x³/3! + ...\n      = 1 + x + x²/2 + x³/6 + ...",
+    "procedure": "f(0)=1, f'(0)=1, f''(0)=1, f'''(0)=1.\n  Coeficiente de cada término = f^(n)(0)/n! = 1/n!.\n  Verificar: e^0 = 1 ✓"
+  },
+  {
+    "id": "p005",
+    "topic": "conceptos_basicos",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "Escribe los primeros 4 términos de la Serie de Taylor de sin(x) alrededor de x=0.",
+    "solution": "sin(x) = x - x³/3! + x⁵/5! - x⁷/7! + ...\n          = x - x³/6 + x⁵/120 - ...",
+    "procedure": "f(x)=sin(x): f(0)=0, f'(0)=cos(0)=1, f''(0)=-sin(0)=0,\n  f'''(0)=-cos(0)=-1. Los términos pares son cero."
+  },
+  {
+    "id": "p006",
+    "topic": "conceptos_basicos",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "¿Qué es una función analítica?",
+    "solution": "Una función es ANALÍTICA si puede representarse con una serie de potencias\n  (su Serie de Taylor converge a f(x) en un intervalo abierto alrededor de 'a').",
+    "procedure": "Funciones analíticas comunes: e^x, sin(x), cos(x), Ln(x) (excepto x=0),\n  polinomios. Una función analítica es infinitamente diferenciable."
+  },
+  {
+    "id": "p007",
+    "topic": "conceptos_basicos",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "Calcula el error absoluto y porcentual al aproximar e^0.5 con los primeros\n3 términos de su Serie de Taylor (a=0). El valor real es e^0.5 = 1.6487.",
+    "solution": "Aproximación con 3 términos:\n    e^0.5 ≈ 1 + 0.5 + (0.5)²/2 = 1 + 0.5 + 0.125 = 1.625\n  Error absoluto = |1.6487 - 1.625| = 0.0237\n  Error porcentual = 0.0237 / 1.6487 × 100% = 1.44%",
+    "procedure": "f(0)=1, f'(0)=1, f''(0)=1.\n  Término 1: 1. Término 2: 0.5. Término 3: 0.5²/2=0.125.\n  Suma=1.625. El cuarto término sería (0.5)³/6=0.0208, explicando el error."
+  },
+  {
+    "id": "p008",
+    "topic": "conceptos_basicos",
+    "difficulty": 3,
+    "type": "open",
+    "tags": [
+      "D"
+    ],
+    "question": "Muestra que la derivada de la Serie de Taylor de e^x sigue siendo e^x.",
+    "solution": "e^x = 1 + x + x²/2! + x³/3! + x⁴/4! + ...\n  d/dx(e^x) = 0 + 1 + 2x/2! + 3x²/3! + 4x³/4! + ...\n            = 1 + x + x²/2! + x³/3! + ...\n            = e^x  ✓",
+    "procedure": "Se deriva término a término. El término n-ésimo x^n/n! se convierte en\n  x^(n-1)/(n-1)!, que es precisamente el término (n-1)-ésimo de la misma serie."
+  },
+  {
+    "id": "p009",
+    "topic": "conceptos_basicos",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la diferencia entre error absoluto y error relativo?",
+    "solution": "Error absoluto   = |valor real - valor aproximado|\n  Error relativo   = |error absoluto / valor real|\n  Error porcentual = error relativo × 100%",
+    "procedure": "El error relativo es más útil para comparar precisión entre escalas distintas.\n  Un error de 0.1 es insignificante si el valor real es 1000,\n  pero enorme si el valor real es 0.01.\n--------------------------------------------------------------------------------\n\n================================================================================\nSECCIÓN 2 – INTERPOLACIÓN LINEAL\n================================================================================"
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "id": "p201",
+    "topic": "simpson_38",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la fórmula de la Regla de 3/8 de Simpson?",
+    "solution": "I = (3h/8)[f(x₀) + 3f(x₁) + 3f(x₂) + f(x₃)]  (forma básica, n=3)\n  Pesos básicos: 1, 3, 3, 1. n debe ser MÚLTIPLO DE 3.",
+    "procedure": "Para n=6: pesos 1,3,3,2,3,3,1. Para n=3: pesos 1,3,3,1."
+  },
+  {
+    "id": "p202",
+    "topic": "simpson_38",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuándo se usa la Regla 3/8 en lugar de 1/3?",
+    "solution": "Cuando n es MÚLTIPLO DE 3 (n=3,6,9,...) o cuando n es impar\n  (situación donde 1/3 no aplica directamente).",
+    "procedure": "Si n=5 (impar): usar 3/8 para los primeros 3 subintervalos\n  y 1/3 para los 2 restantes."
+  },
+  {
+    "id": "p203",
+    "topic": "simpson_38",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Calcula ∫₀¹ x³·e^x dx con n=3 usando Simpson 3/8. Exacto ≈ 0.5763.",
+    "solution": "h=1/3.  Puntos: x=[0, 1/3, 2/3, 1]\n\n  | xi   | f(xi)=xi³·e^xi    |\n  |------|-------------------|\n  | 0    | 0                 |\n  | 1/3  | (1/27)e^{1/3}=0.05169 |\n  | 2/3  | (8/27)e^{2/3}=0.57707 |\n  | 1    | e=2.71828         |\n\n  I = (3·(1/3)/8)[0 + 3(0.05169) + 3(0.57707) + 2.71828]\n    = (1/8)[0 + 0.15507 + 1.73121 + 2.71828]\n    = (1/8)(4.60456) = 0.57557\n\n  Error = |0.5763-0.5756| = 0.0007 (muy preciso) ✓",
+    "procedure": "I=(3h/8)[f₀+3f₁+3f₂+f₃]=(1/8)[0+0.155+1.731+2.718]=0.5756"
+  },
+  {
+    "id": "p204",
+    "topic": "simpson_38",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Calcula ∫₋₂² (3x³-10)dx con n=3 usando Simpson 3/8.",
+    "solution": "h=4/3.  Puntos: x=[-2, -2/3, 2/3, 2]\n\n  f(-2)=-34,  f(-2/3)=-10.889,  f(2/3)=-9.111,  f(2)=14\n\n  I = (3·(4/3)/8)[-34 + 3(-10.889) + 3(-9.111) + 14]\n    = (0.5)[-34 - 32.667 - 27.333 + 14]\n    = (0.5)(-80.000) = -40.000\n\n  Exacto: ∫3x³dx=0 (impar) + ∫(-10)dx=-40 → EXACTO ✓",
+    "procedure": "3x³-10 es grado 3. Simpson 3/8 también integra exactamente grado ≤ 3."
+  },
+  {
+    "id": "p205",
+    "topic": "simpson_38",
+    "difficulty": 2,
+    "type": "prerequisite",
+    "tags": [
+      "M",
+      "C"
+    ],
+    "question": "¿Quieres usar Simpson 3/8? ¿Qué se necesita?",
+    "solution": "1) n múltiplo de 3. 2) h=(b-a)/n.\n  3) n+1 puntos. 4) Pesos: 1,3,3,2,3,3,2,...,3,3,1.",
+    "procedure": "Para n=3 los pesos son simplemente 1,3,3,1.\n  Especialmente útil cuando n es impar."
+  },
+  {
+    "id": "p206",
+    "topic": "simpson_38",
+    "difficulty": 3,
+    "type": "open",
+    "tags": [
+      "D"
+    ],
+    "question": "Compara Simpson 1/3 (n=2) y 3/8 (n=3) calculando ∫₀¹ e^x dx. Exacto=e-1=1.71828.",
+    "solution": "SIMPSON 1/3, n=2 (h=0.5):\n    I=(0.5/3)[e⁰+4e^0.5+e¹]=(1/6)[1+6.5948+2.7183]=(1/6)(10.3131)=1.71886\n    Error=0.00058\n\n  SIMPSON 3/8, n=3 (h=1/3):\n    I=(1/8)[e⁰+3e^{1/3}+3e^{2/3}+e¹]\n     =(1/8)[1+4.1868+5.8432+2.7183]=(1/8)(13.7483)=1.71854\n    Error=0.00026\n\n  Simpson 3/8 (n=3) es más preciso aquí.",
+    "procedure": "Ambos métodos son O(h⁴). 3/8 gana porque tiene un punto más de evaluación.\n\n================================================================================\nSECCIÓN 27 – EULER HACIA ADELANTE\n================================================================================"
+  }
+]

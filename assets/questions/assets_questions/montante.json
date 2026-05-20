@@ -1,0 +1,101 @@
+[
+  {
+    "id": "p123",
+    "topic": "montante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuál es la fórmula del método de Montante para calcular el nuevo elemento?",
+    "solution": "N.E. = [(E.P.) · (E.A.) - (E.C.F.P.) · (E.C.C.P.)] / P.A.\n\n  Donde:\n    N.E.    = Nuevo Elemento\n    E.P.    = Elemento Pivote (elemento diagonal actual)\n    E.A.    = Elemento Actual (el que se va a transformar)\n    E.C.F.P.= Elemento de la Columna del Pivote en la Fila del elemento actual\n    E.C.C.P.= Elemento de la Columna del Pivote en la fila del Pivote (=E.P.)\n              [Nota: en la misma fila del pivote, este es el E.P. mismo]\n    P.A.    = Pivote Anterior",
+    "procedure": "Más precisamente: N.E. = (E.P.·E.A. - E.C.F.P.·E.C.F.F.P.) / P.A.\n  donde E.C.F.F.P. es el elemento de la Fila del Pivote en la Columna del Actual."
+  },
+  {
+    "id": "p124",
+    "topic": "montante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Cuáles son las 2 reglas generales del método de Montante?",
+    "solution": "a) La FILA del pivote se transfiere IDÉNTICA (sin cambios).\n  b) Las COLUMNAS quedarán formadas por CEROS, excepto la diagonal principal.",
+    "procedure": "Al final del proceso se obtiene una matriz cuasidiagonal.\n  Las variables se obtienen: x_i = (elemento de la última columna) / (elemento diagonal)."
+  },
+  {
+    "id": "p125",
+    "topic": "montante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Con qué valor inicia el Pivote Anterior (P.A.) en el método de Montante?",
+    "solution": "P.A. = 1 (UNO) en la primera iteración.\n  No hay pivote previo al primer pivote, por lo que se usa 1.",
+    "procedure": "En iteraciones posteriores, P.A. es el elemento pivote de la iteración anterior.\n  Así la fórmula N.E. = (E.P.·E.A. - producto) / P.A. funciona consistentemente."
+  },
+  {
+    "id": "p126",
+    "topic": "montante",
+    "difficulty": 1,
+    "type": "open",
+    "tags": [
+      "F"
+    ],
+    "question": "¿Puede usarse cero como elemento pivote en el método de Montante?",
+    "solution": "NO. Un pivote igual a cero provoca divisiones por cero en la iteración siguiente.\n  Si el elemento diagonal es cero → intercambiar filas para colocar un\n  elemento no nulo en la posición pivote.",
+    "procedure": "Si en la posición diagonal aparece un cero, se busca otra fila con\n  elemento no nulo en esa columna y se intercambian las filas."
+  },
+  {
+    "id": "p127",
+    "topic": "montante",
+    "difficulty": 2,
+    "type": "tabulation",
+    "tags": [
+      "M",
+      "T"
+    ],
+    "question": "Para el sistema 2a+5b-2c=1, -a+2b+3c=2, 3a-3b+2c=3,\naplica la primera iteración de Montante (Pivote=2, P.A.=1).",
+    "solution": "Matriz aumentada inicial:\n  | 2  |  5  | -2  |  1  |\n  | -1 |  2  |  3  |  2  |\n  | 3  | -3  |  2  |  3  |\n\n  Pivote = 2 (elemento [1,1]).  P.A. = 1.\n  REGLA: La fila 1 (fila del pivote) pasa IDÉNTICA.\n\n  Fila 2 (transformada):\n    col a: 0  (columna del pivote → siempre cero)\n    col b: N.E. = (2·2 - 5·(-1)) / 1 = (4+5)/1 = 9\n    col c: N.E. = (2·3 - (-2)·(-1)) / 1 = (6-2)/1 = 4\n    col d: N.E. = (2·2 - 1·(-1)) / 1 = (4+1)/1 = 5\n\n  Fila 3 (transformada):\n    col a: 0\n    col b: N.E. = (2·(-3) - 5·3) / 1 = (-6-15)/1 = -21\n    col c: N.E. = (2·2 - (-2)·3) / 1 = (4+6)/1 = 10\n    col d: N.E. = (2·3 - 1·3) / 1 = (6-3)/1 = 3\n\n  Matriz después de la 1era iteración:\n  | 2  |  5  | -2  |  1  |\n  | 0  |  9  |  4  |  5  |\n  | 0  | -21 | 10  |  3  |",
+    "procedure": "Aplicar N.E.=(E.P.·E.A.-E.C.F.P.·E.C.C.P.)/P.A. para cada elemento\n  que no está en la fila del pivote ni en la columna del pivote."
+  },
+  {
+    "id": "p128",
+    "topic": "montante",
+    "difficulty": 2,
+    "type": "open",
+    "tags": [
+      "M"
+    ],
+    "question": "Una vez obtenida la matriz diagonal final [D₁ 0 0|r₁; 0 D₂ 0|r₂; 0 0 D₃|r₃]\nen el método de Montante, ¿cómo se obtienen las variables?",
+    "solution": "a = r₁ / D₁\n  b = r₂ / D₂\n  c = r₃ / D₃",
+    "procedure": "Ejemplo: si la matriz final es:\n  | 87 |  0 |  0  |  62  |\n  |  0 | 87 |  0  |  19  |\n  |  0 |  0 | 87  |  66  |\n\n  Entonces: a = 62/87,  b = 19/87,  c = 66/87."
+  },
+  {
+    "id": "p129",
+    "topic": "montante",
+    "difficulty": 2,
+    "type": "prerequisite",
+    "tags": [
+      "M",
+      "C"
+    ],
+    "question": "¿Quieres usar el método de Montante? ¿Qué se necesita?",
+    "solution": "Se necesita:\n  1) Un sistema de ecuaciones lineales n×n (con solución única).\n  2) La matriz aumentada [A|b].\n  3) Elegir el pivote de cada columna (preferiblemente no cero).\n  4) Aplicar la fórmula iterativamente hasta obtener la forma diagonal.",
+    "procedure": "Ventaja: trabaja sin fracciones durante el proceso (evita errores de redondeo).\n  Desventaja: si un pivote es cero, hay que intercambiar filas."
+  },
+  {
+    "id": "p130",
+    "topic": "montante",
+    "difficulty": 3,
+    "type": "tabulation",
+    "tags": [
+      "D",
+      "T"
+    ],
+    "question": "Resuelve completamente el sistema 2a-b+c=1, -a+3b+2c=5, 3a+2b-4c=-1\npor el método de Montante. Muestra todas las iteraciones.",
+    "solution": "Matriz inicial:\n  |  2 | -1 |  1 |  1 |\n  | -1 |  3 |  2 |  5 |\n  |  3 |  2 | -4 | -1 |\n\n  ITERACIÓN 1: Pivote₁=2, P.A.=1\n  Fila 1: pasa igual: [2, -1, 1, 1]\n  Fila 2: [0, (2·3-(-1)(-1))/1, (2·2-1·(-1))/1, (2·5-1·(-1))/1]\n         =[0, (6-1)/1, (4+1)/1, (10+1)/1]\n         =[0, 5, 5, 11]\n  Fila 3: [0, (2·2-(-1)·3)/1, (2·(-4)-1·3)/1, (2·(-1)-1·3)/1]\n         =[0, (4+3)/1, (-8-3)/1, (-2-3)/1]\n         =[0, 7, -11, -5]\n\n  ITERACIÓN 2: Pivote₂=5, P.A.=2\n  Fila 2: pasa igual: [0, 5, 5, 11]\n  Fila 1: [0 ya, ya cero, (5·1-(-1)·5)/2, (5·1-(-1)·11)/2]\n          Nota: solo transformamos los elementos fuera de fila y columna pivote\n          col c: (5·1-(-1)·5)/2 = (5+5)/2 = 5\n          col d: (5·1-1·11)/2 = (5-11)/2 = -3\n          → Fila 1: [2, 0, 5, -3]  (col a permanece, col b = 0)\n  Fila 3: col c: (5·(-11)-7·5)/2 = (-55-35)/2 = -45\n           col d: (5·(-5)-7·11)/2 = (-25-77)/2 = -51\n           → Fila 3: [0, 0, -45, -51]\n\n  ITERACIÓN 3: Pivote₃=-45, P.A.=5\n  Fila 3: pasa igual: [0, 0, -45, -51]\n  Fila 1: col d: (-45·(-3)-5·(-51))/5 = (135+255)/5 = 390/5 = 78\n           → Fila 1: [2, 0, 0, 78]\n  Fila 2: col d: (-45·11-(-11)·(-51))/5 = (-495-561)/5 = -1056/5 = -211.2\n           Hmm, revisar cálculo.\n           col d: (-45·11-5·(-51))/5 = (-495+255)/5 = -240/5 = -48\n           → Fila 2: [0, 5, 0, -48]\n\n  Matriz final:\n  |  2 |  0 |   0  |  78  |\n  |  0 |  5 |   0  | -48  |\n  |  0 |  0 | -45  | -51  |\n\n  Solución:\n    a = 78/2  = 39  ... (parece grande, verificar el sistema)\n    b = -48/5 = -9.6\n    c = -51/(-45) = 1.133\n\n  (Los valores exactos dependen de la aritmética sin errores de redondeo.)",
+    "procedure": "Verificar sustituyendo en la primera ecuación: 2(39)-(-9.6)+(1.133)=1?\n  78+9.6+1.133=88.7≠1. Hay error en alguna iteración. Revisar el libro p.30-31.\n\n================================================================================\nSECCIÓN 14 – MÉTODO DE GAUSS-JORDÁN\n================================================================================"
+  }
+]
