@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import logging
 import random
+from dataclasses import replace
 
 from engine.utils.base_solver import ExerciseBundle
 from game.questions.question_bank import get_session_set, get
@@ -51,17 +52,58 @@ class BankGenerator:
 
     # ── Interfaz pública (compatible con BaseGenerator) ───────────────────
 
+    # Tipos elegibles para conversión a opción múltiple
+    _MC_ELIGIBLE = {"prerequisite", "open"}
+    # Longitud máxima de solución para que quepa como opción
+    _MC_MAX_SOL_LEN = 300
+
     def generate(self, difficulty: int) -> ExerciseBundle:
         """
         Devuelve la siguiente pregunta del banco como ExerciseBundle.
-
-        Si la cola está vacía, la recarga filtrando por dificultad.
+        Las preguntas de tipo 'prerequisite' y 'open' cortas se convierten
+        automáticamente a opción múltiple.
         """
         q = self._next(difficulty)
         self._used_ids.add(q.id)
         bundle = q.to_exercise_bundle()
-        logger.debug("BankGenerator → %s [%s] diff=%d", q.id, q.type, q.difficulty)
+
+        # Intentar convertir a opción múltiple
+        if (
+            q.type in self._MC_ELIGIBLE
+            and len(q.solution.strip()) <= self._MC_MAX_SOL_LEN
+        ):
+            bundle = self._make_mc_bundle(q, bundle)
+
+        logger.debug("BankGenerator → %s [%s→%s] diff=%d",
+                     q.id, q.type, bundle.exercise_type, q.difficulty)
         return bundle
+
+    def _make_mc_bundle(
+        self, q: "BankQuestion", original: ExerciseBundle
+    ) -> ExerciseBundle:
+        """
+        Convierte un ExerciseBundle de texto en opción múltiple.
+        Usa soluciones de otras preguntas como distractores.
+        """
+        from game.questions.question_bank import get_distractors
+
+        distractors = get_distractors(q, count=3)
+        if len(distractors) < 2:
+            # No hay suficientes distractores → dejar como texto
+            return original
+
+        correct = q.solution[:200].rstrip()
+        options_pool = [correct] + distractors[:3]
+        random.shuffle(options_pool)
+        correct_idx = options_pool.index(correct)
+
+        from dataclasses import replace
+        return replace(
+            original,
+            exercise_type="multiple_choice",
+            options=options_pool,
+            correct_option=correct_idx,
+        )
 
     def reset(self) -> None:
         """Reinicia la cola para una nueva sesión."""

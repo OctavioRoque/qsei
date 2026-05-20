@@ -223,7 +223,7 @@ class PlayerRepository:
                 key=r["key"],
                 name_es=r["name_es"],
                 description_es=r["description_es"],
-                icon=r["icons"],
+                icons=r["icons"],
                 xp_reward=r["xp_reward"],
                 unlocked=r["unlocked_at"] is not None,
                 unlocked_at=r["unlocked_at"],

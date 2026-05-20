@@ -203,3 +203,40 @@ def get_by_id(question_id: str) -> BankQuestion | None:
             if d["id"] == question_id:
                 return BankQuestion.from_dict(d)
     return None
+
+
+def get_distractors(
+    question: "BankQuestion",
+    count: int = 3,
+    seed: int | None = None,
+) -> list[str]:
+    """
+    Genera distractores para una pregunta tomando las soluciones de otras
+    preguntas del mismo tema y dificultad.
+
+    Si no hay suficientes en el mismo tema/dificultad, amplía a todo el tema.
+    """
+    pool = _load_topic(question.topic)
+
+    # Primero intentar misma dificultad, excluyendo la pregunta actual
+    candidates = [
+        q.solution for q in pool
+        if q.id != question.id
+        and q.difficulty == question.difficulty
+        and len(q.solution) < 350
+        and q.solution.strip()
+    ]
+
+    # Si no alcanza, ampliar a todo el tema
+    if len(candidates) < count:
+        candidates = [
+            q.solution for q in pool
+            if q.id != question.id
+            and len(q.solution) < 350
+            and q.solution.strip()
+        ]
+
+    rng = random.Random(seed)
+    rng.shuffle(candidates)
+    # Recortar a ~200 chars para que quepan como opciones
+    return [s[:200].rstrip() for s in candidates[:count]]

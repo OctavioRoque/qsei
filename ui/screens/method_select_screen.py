@@ -2,49 +2,47 @@
 ui/screens/method_select_screen.py
 ====================================
 Pantalla de selección de método numérico y dificultad.
-El jugador elige qué método practicar y con qué nivel de dificultad
-antes de iniciar la sesión de juego.
 """
 
 from __future__ import annotations
-
 from typing import Callable
-
 import flet as ft
 
-from config import DIFFICULTY_LEVELS, NUMERIC_METHODS
 from ui.themes.theme import (
     Colors, Typography, Spacing, Radius,
-    card, title_text, subtitle_text, body_text,
-    primary_button, secondary_button, difficulty_badge,
+    card, title_text, subtitle_text,
+    primary_button, secondary_button,
 )
 
-# ─── Mapa de métodos disponibles (key → etiqueta legible) ────────────────────
 _AVAILABLE_METHODS: dict[str, str] = {
     "biseccion":        "Bisección",
     "falsa_posicion":   "Falsa Posición",
     "newton_raphson":   "Newton-Raphson",
     "punto_fijo":       "Punto Fijo",
     "secante":          "Secante",
+    "lagrange":         "Lagrange",
+    "interpolacion_lineal": "Interpolación Lineal",
+    "gauss_seidel":     "Gauss-Seidel",
+    "jacobi":           "Jacobi",
+    "euler_adelante":   "Euler Adelante",
+    "runge_kutta_4":    "Runge-Kutta 4",
 }
 
-# Solo "biseccion" está completamente implementado por ahora
-_IMPLEMENTED = {"biseccion"}
+# Verificar qué métodos tienen preguntas en el banco
+def _implemented_topics() -> set[str]:
+    from pathlib import Path
+    q_dir = Path(__file__).resolve().parent.parent.parent / "assets" / "questions"
+    return {p.stem for p in q_dir.glob("*.json") if p.stem != "all"}
+
+# Dificultades del banco: 1=Fácil, 2=Media, 3=Difícil
+_BANK_DIFFICULTIES = [
+    {"value": 1, "label": "Fácil",   "desc": "Conceptos básicos",   "color": "#4CAF50"},
+    {"value": 2, "label": "Media",   "desc": "Aplicación directa",  "color": "#FF9800"},
+    {"value": 3, "label": "Difícil", "desc": "Análisis profundo",   "color": "#F44336"},
+]
 
 
 class MethodSelectScreen(ft.Column):
-    """
-    Pantalla de selección de método y dificultad.
-
-    Parámetros
-    ----------
-    player_id       ID del jugador activo.
-    on_start_session  Callback (player_id, method_key, difficulty) → None
-    on_back           Callback () → None   (regresa a la pantalla de inicio)
-    router            AppRouter (no se usa directamente, pero se preserva)
-    page              ft.Page
-    """
-
     def __init__(
         self,
         player_id: int,
@@ -59,207 +57,125 @@ class MethodSelectScreen(ft.Column):
         self._on_back = on_back
         self._page = page
 
-        # Estado de selección
         self._selected_method: str = "biseccion"
-        self._selected_difficulty: int = 3          # dificultad 1–10
+        self._selected_difficulty: int = 1
+        self._implemented = _implemented_topics()
 
-        # Controles dinámicos
         self._method_buttons: dict[str, ft.Container] = {}
         self._diff_buttons: dict[int, ft.Container] = {}
         self._status_text = ft.Text("", color=Colors.ERROR, size=Typography.SIZE_XS)
 
         self._build()
 
-    # ── Construcción de la UI ─────────────────────────────────────────────────
-
     def _build(self) -> None:
-        """Construye la pantalla completa."""
-
-        # ── Sección: elegir método ──
         method_cards = []
         for key, label in _AVAILABLE_METHODS.items():
-            implemented = key in _IMPLEMENTED
-            container = self._make_method_card(key, label, implemented)
-            self._method_buttons[key] = container
-            method_cards.append(container)
+            available = key in self._implemented
+            c = self._make_method_card(key, label, available)
+            self._method_buttons[key] = c
+            method_cards.append(c)
 
-        methods_section = ft.Column(
-            [
-                ft.Text(
-                    "Método Numérico",
-                    size=Typography.SIZE_MD,
-                    weight=ft.FontWeight.BOLD,
-                    color=Colors.TEXT_PRIMARY,
-                ),
-                ft.Text(
-                    "Elige el método que deseas practicar",
-                    size=Typography.SIZE_XS,
-                    color=Colors.TEXT_SECONDARY,
-                ),
-                ft.Container(height=Spacing.SM),
-                ft.Row(method_cards, wrap=True, spacing=Spacing.MD, run_spacing=Spacing.SM),
-            ],
-            spacing=Spacing.SM,
-        )
+        methods_section = ft.Column([
+            ft.Text("Método Numérico", size=Typography.SIZE_MD,
+                    weight=ft.FontWeight.BOLD, color=Colors.TEXT_PRIMARY),
+            ft.Text("Elige el método que deseas practicar",
+                    size=Typography.SIZE_XS, color=Colors.TEXT_SECONDARY),
+            ft.Container(height=Spacing.SM),
+            ft.Row(method_cards, wrap=True, spacing=Spacing.MD, run_spacing=Spacing.SM),
+        ], spacing=Spacing.SM)
 
-        # ── Sección: elegir dificultad ──
         diff_cards = []
-        for level in DIFFICULTY_LEVELS:
-            # Usamos el valor medio del rango como representativo
-            diff_value = (level.min_diff + level.max_diff) // 2
-            container = self._make_diff_card(level, diff_value)
-            self._diff_buttons[diff_value] = container
-            diff_cards.append(container)
+        for d in _BANK_DIFFICULTIES:
+            c = self._make_diff_card(d)
+            self._diff_buttons[d["value"]] = c
+            diff_cards.append(c)
 
-        diff_section = ft.Column(
-            [
-                ft.Text(
-                    "Dificultad",
-                    size=Typography.SIZE_MD,
-                    weight=ft.FontWeight.BOLD,
-                    color=Colors.TEXT_PRIMARY,
-                ),
-                ft.Text(
-                    "¿Qué tan retador quieres que sea?",
-                    size=Typography.SIZE_XS,
-                    color=Colors.TEXT_SECONDARY,
-                ),
-                ft.Container(height=Spacing.SM),
-                ft.Row(diff_cards, spacing=Spacing.MD, wrap=True),
-            ],
-            spacing=Spacing.SM,
-        )
+        diff_section = ft.Column([
+            ft.Text("Dificultad", size=Typography.SIZE_MD,
+                    weight=ft.FontWeight.BOLD, color=Colors.TEXT_PRIMARY),
+            ft.Text("¿Qué tan retador quieres que sea?",
+                    size=Typography.SIZE_XS, color=Colors.TEXT_SECONDARY),
+            ft.Container(height=Spacing.SM),
+            ft.Row(diff_cards, spacing=Spacing.MD),
+        ], spacing=Spacing.SM)
 
-        # ── Botones de acción ──
-        action_row = ft.Row(
-            [
-                secondary_button("← Volver", lambda _: self._on_back()),
-                primary_button(
-                    "¡Empezar sesión!",
-                    self._on_start,
-                    icon=ft.icons.PLAY_ARROW_ROUNDED,
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        )
+        action_row = ft.Row([
+            secondary_button("← Volver", lambda _: self._on_back()),
+            primary_button("¡Empezar sesión!", self._on_start,
+                           icon=ft.icons.PLAY_ARROW_ROUNDED),
+        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
 
-        # ── Layout completo ──
         self.controls = [
             ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Row(
-                            [
-                                ft.Text("🎓", size=48),
-                                ft.Column(
-                                    [
-                                        title_text("Selecciona tu desafío", size=22),
-                                        subtitle_text("Elige método y dificultad para comenzar"),
-                                    ],
-                                    spacing=4,
-                                ),
-                            ],
-                            spacing=Spacing.MD,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        ),
-                        ft.Divider(color=Colors.BORDER, height=32),
-                        card(methods_section, padding=Spacing.LG),
-                        ft.Container(height=Spacing.MD),
-                        card(diff_section, padding=Spacing.LG),
-                        ft.Container(height=Spacing.MD),
-                        self._status_text,
-                        action_row,
-                    ],
-                    spacing=Spacing.MD,
-                    scroll=ft.ScrollMode.AUTO,
-                ),
-                padding=ft.Padding(left=Spacing.LG, top=Spacing.LG, right=Spacing.LG, bottom=Spacing.LG),
+                content=ft.Column([
+                    ft.Row([
+                        ft.Text("🎓", size=48),
+                        ft.Column([
+                            title_text("Selecciona tu desafío", size=22),
+                            subtitle_text("Elige método y dificultad para comenzar"),
+                        ], spacing=4),
+                    ], spacing=Spacing.MD,
+                       vertical_alignment=ft.CrossAxisAlignment.CENTER),
+                    ft.Divider(color=Colors.BORDER, height=32),
+                    card(methods_section, padding=Spacing.LG),
+                    ft.Container(height=Spacing.MD),
+                    card(diff_section, padding=Spacing.LG),
+                    ft.Container(height=Spacing.MD),
+                    self._status_text,
+                    action_row,
+                ], spacing=Spacing.MD, scroll=ft.ScrollMode.AUTO),
+                padding=ft.Padding(left=Spacing.LG, top=Spacing.LG,
+                                   right=Spacing.LG, bottom=Spacing.LG),
                 expand=True,
             )
         ]
         self.expand = True
         self.spacing = 0
-
-        # Marcar selecciones iniciales
         self._refresh_method_highlights()
         self._refresh_diff_highlights()
 
-    # ── Tarjetas de método ────────────────────────────────────────────────────
-
-    def _make_method_card(self, key: str, label: str, implemented: bool) -> ft.Container:
-        """Crea una tarjeta clickeable para un método numérico."""
-
-        badge = (
-            ft.Container(
-                content=ft.Text("disponible", size=10, color=Colors.SUCCESS),
-                bgcolor="#0D2E1A",
-                border_radius=Radius.SM,
-                padding=ft.Padding(left=6, top=2, right=6, bottom=2),
-            )
-            if implemented
-            else ft.Container(
-                content=ft.Text("próximamente", size=10, color=Colors.TEXT_MUTED),
-                bgcolor=Colors.BG_SURFACE,
-                border_radius=Radius.SM,
-                padding=ft.Padding(left=6, top=2, right=6, bottom=2),
-            )
+    def _make_method_card(self, key: str, label: str, available: bool) -> ft.Container:
+        badge = ft.Container(
+            content=ft.Text("disponible" if available else "próximamente",
+                            size=10,
+                            color=Colors.SUCCESS if available else Colors.TEXT_MUTED),
+            bgcolor="#0D2E1A" if available else Colors.BG_SURFACE,
+            border_radius=Radius.SM,
+            padding=ft.Padding(left=6, top=2, right=6, bottom=2),
         )
-
-        container = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text(
-                        label,
-                        size=Typography.SIZE_SM,
-                        weight=ft.FontWeight.BOLD,
-                        color=Colors.TEXT_PRIMARY if implemented else Colors.TEXT_MUTED,
-                    ),
-                    badge,
-                ],
-                spacing=Spacing.XS,
-                horizontal_alignment=ft.CrossAxisAlignment.START,
-            ),
+        return ft.Container(
+            content=ft.Column([
+                ft.Text(label, size=Typography.SIZE_SM, weight=ft.FontWeight.BOLD,
+                        color=Colors.TEXT_PRIMARY if available else Colors.TEXT_MUTED),
+                badge,
+            ], spacing=Spacing.XS, horizontal_alignment=ft.CrossAxisAlignment.START),
             width=180,
-            padding=ft.Padding(left=Spacing.MD, top=Spacing.MD, right=Spacing.MD, bottom=Spacing.MD),
+            padding=ft.Padding(left=Spacing.MD, top=Spacing.MD,
+                               right=Spacing.MD, bottom=Spacing.MD),
             border_radius=Radius.MD,
             bgcolor=Colors.BG_CARD,
             border=ft.border.all(1, Colors.BORDER),
-            on_click=(lambda e, k=key: self._select_method(k)) if implemented else None,
+            on_click=(lambda e, k=key: self._select_method(k)) if available else None,
             data=key,
         )
-        return container
 
-    def _make_diff_card(self, level, diff_value: int) -> ft.Container:
-        """Crea una tarjeta clickeable para un nivel de dificultad."""
-        container = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text(
-                        level.label_es,
-                        size=Typography.SIZE_SM,
-                        weight=ft.FontWeight.BOLD,
-                        color=Colors.TEXT_PRIMARY,
-                    ),
-                    ft.Text(
-                        f"Nivel {level.min_diff}–{level.max_diff}",
-                        size=Typography.SIZE_XS,
-                        color=Colors.TEXT_SECONDARY,
-                    ),
-                ],
-                spacing=4,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            width=120,
-            padding=ft.Padding(left=Spacing.MD, top=Spacing.MD, right=Spacing.MD, bottom=Spacing.MD),
+    def _make_diff_card(self, d: dict) -> ft.Container:
+        return ft.Container(
+            content=ft.Column([
+                ft.Text(d["label"], size=Typography.SIZE_SM,
+                        weight=ft.FontWeight.BOLD, color=Colors.TEXT_PRIMARY),
+                ft.Text(d["desc"], size=Typography.SIZE_XS,
+                        color=Colors.TEXT_SECONDARY),
+            ], spacing=4, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=130,
+            padding=ft.Padding(left=Spacing.MD, top=Spacing.MD,
+                               right=Spacing.MD, bottom=Spacing.MD),
             border_radius=Radius.MD,
             bgcolor=Colors.BG_CARD,
             border=ft.border.all(1, Colors.BORDER),
-            on_click=lambda e, dv=diff_value: self._select_difficulty(dv),
-            data=diff_value,
+            on_click=lambda e, v=d["value"]: self._select_difficulty(v),
+            data=d["value"],
         )
-        return container
-
-    # ── Selección y highlights ────────────────────────────────────────────────
 
     def _select_method(self, key: str) -> None:
         self._selected_method = key
@@ -267,39 +183,35 @@ class MethodSelectScreen(ft.Column):
         self._refresh_method_highlights()
         self._page.update()
 
-    def _select_difficulty(self, diff_value: int) -> None:
-        self._selected_difficulty = diff_value
+    def _select_difficulty(self, value: int) -> None:
+        self._selected_difficulty = value
         self._status_text.value = ""
         self._refresh_diff_highlights()
         self._page.update()
 
     def _refresh_method_highlights(self) -> None:
-        for key, container in self._method_buttons.items():
+        for key, c in self._method_buttons.items():
             if key == self._selected_method:
-                container.border = ft.border.all(2, Colors.PRIMARY)
-                container.bgcolor = "#0A1A35"
+                c.border = ft.border.all(2, Colors.PRIMARY)
+                c.bgcolor = "#0A1A35"
             else:
-                container.border = ft.border.all(1, Colors.BORDER)
-                container.bgcolor = Colors.BG_CARD
+                c.border = ft.border.all(1, Colors.BORDER)
+                c.bgcolor = Colors.BG_CARD
 
     def _refresh_diff_highlights(self) -> None:
-        for dv, container in self._diff_buttons.items():
-            if dv == self._selected_difficulty:
-                container.border = ft.border.all(2, Colors.PRIMARY)
-                container.bgcolor = "#0A1A35"
+        for v, c in self._diff_buttons.items():
+            if v == self._selected_difficulty:
+                c.border = ft.border.all(2, Colors.PRIMARY)
+                c.bgcolor = "#0A1A35"
             else:
-                container.border = ft.border.all(1, Colors.BORDER)
-                container.bgcolor = Colors.BG_CARD
-
-    # ── Acción principal ──────────────────────────────────────────────────────
+                c.border = ft.border.all(1, Colors.BORDER)
+                c.bgcolor = Colors.BG_CARD
 
     def _on_start(self, e: ft.ControlEvent) -> None:
-        """Valida la selección e inicia la sesión."""
-        if not self._selected_method:
-            self._status_text.value = "⚠️ Selecciona un método para continuar."
+        if self._selected_method not in self._implemented:
+            self._status_text.value = "⚠️ Ese método aún no tiene preguntas en el banco."
             self._page.update()
             return
-
         self._on_start_session(
             self._player_id,
             self._selected_method,
