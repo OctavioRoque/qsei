@@ -58,11 +58,13 @@ class GameScreen(ft.Column):
         self,
         session: GameSession,
         on_end_session: Callable,
+        on_back_to_menu: Callable,
         page: ft.Page,
     ) -> None:
         super().__init__()
         self._session = session
         self._on_end_session = on_end_session
+        self._on_back_to_menu = on_back_to_menu
         self._page = page
 
         self._current_bundle: ExerciseBundle | None = None
@@ -73,21 +75,28 @@ class GameScreen(ft.Column):
 
         # Controles permanentes
         self._score_col = ft.Column(
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            width=260,
+        )
         self._streak_text = ft.Text(
             "🔥 0", color=Colors.WARNING,
             size=Typography.SIZE_MD, weight=ft.FontWeight.BOLD)
         self._timer_text = ft.Text(
             "⏱ 0s", color=Colors.TEXT_SECONDARY, size=Typography.SIZE_SM)
+        self._lives_text = ft.Text(
+            "❤️ 3", color=Colors.ERROR, size=Typography.SIZE_SM,
+            weight=ft.FontWeight.BOLD)
+        # Do not create a persistent home button to avoid reuse across parents.
+        # Create a dedicated header end button instance instead.
+        self._header_end_btn = secondary_button("Terminar sesión", self._on_end)
 
         # Zonas dinámicas
         self._question_area = ft.Column(spacing=Spacing.MD)
         self._answer_area   = ft.Column(spacing=Spacing.SM)
         self._feedback_area = ft.Column()
-        self._action_row    = ft.Row(alignment=ft.MainAxisAlignment.END)
+        self._action_row    = ft.Row(alignment=ft.MainAxisAlignment.END, spacing=Spacing.SM)
 
         self._next_btn = primary_button("Siguiente →", self._on_next, disabled=True)
-        self._end_btn  = secondary_button("Terminar sesión", self._on_end)
 
         self._build_layout()
 
@@ -97,9 +106,8 @@ class GameScreen(ft.Column):
         header = ft.Container(
             content=ft.Row([
                 self._score_col,
-                ft.Column([self._streak_text, self._timer_text],
-                          horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                self._end_btn,
+                ft.Row([self._streak_text, self._timer_text, self._lives_text], spacing=Spacing.SM),
+                ft.Row([self._header_end_btn], spacing=Spacing.SM),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                vertical_alignment=ft.CrossAxisAlignment.CENTER),
             padding=ft.Padding(left=Spacing.LG, top=Spacing.SM,
@@ -140,7 +148,9 @@ class GameScreen(ft.Column):
 
         self._refresh_score()
         self._feedback_area.controls.clear()
-        self._action_row.controls = [self._next_btn]
+        # Create fresh action buttons for this question to avoid reusing controls
+        home_btn = secondary_button("Volver al menú", self._on_home)
+        self._action_row.controls = [home_btn, self._next_btn]
         self._next_btn.disabled = True
 
         # ── Cabecera de la pregunta ──
@@ -314,10 +324,7 @@ class GameScreen(ft.Column):
                 return validation
 
         _, score = self._session.answer("mc_bank", _PassthroughValidator())
-        self._show_feedback(validation, score)
-        self._refresh_score()
-        self._next_btn.disabled = False
-        self._page.update()
+        self._after_answer(validation, score)
 
     def _build_bank_input(self, bundle: ExerciseBundle) -> None:
         """Pregunta de banco: campo libre + botón Ver Solución."""
@@ -460,10 +467,7 @@ class GameScreen(ft.Column):
                 return validation
 
         _, score = self._session.answer("self_assessed", _PassthroughValidator())
-        self._show_feedback(validation, score)
-        self._refresh_score()
-        self._next_btn.disabled = False
-        self._page.update()
+        self._after_answer(validation, score)
 
     # ── Flujo de respuesta: procedural ────────────────────────────────────────
 
@@ -485,10 +489,7 @@ class GameScreen(ft.Column):
             raw_answer = bundle.options[raw_answer]
 
         validation, score = self._session.answer(raw_answer, validator)
-        self._show_feedback(validation, score)
-        self._refresh_score()
-        self._next_btn.disabled = False
-        self._page.update()
+        self._after_answer(validation, score)
 
     # ── Feedback ──────────────────────────────────────────────────────────────
 
@@ -540,10 +541,44 @@ class GameScreen(ft.Column):
         bundle = self._session.next_question()
         self._load_bundle(bundle)
 
-    def _on_end(self, e: ft.ControlEvent) -> None:
+    def _on_end(self, e: ft.ControlEvent | None = None) -> None:
         self._stop_timer()
         summary = self._session.end()
         self._on_end_session(summary)
+
+    def _on_home(self, e: ft.ControlEvent) -> None:
+        self._stop_timer()
+        self._session.end()
+        self._on_back_to_menu()
+
+    def _after_answer(
+        self,
+        validation: ValidationResult,
+        score: ScoreBreakdown,
+    ) -> None:
+        self._show_feedback(validation, score)
+        self._refresh_score()
+
+        if self._session.lives_remaining <= 0:
+            self._feedback_area.controls.append(
+                ft.Text(
+                    "💀 Has perdido todas las vidas. La sesión ha terminado.",
+                    size=Typography.SIZE_SM,
+                    color=Colors.ERROR,
+                    weight=ft.FontWeight.BOLD,
+                )
+            )
+            self._page.update()
+            self._on_end(None)
+            return
+
+        self._next_btn.disabled = False
+        # Ensure action buttons are present (create fresh home button to avoid reuse)
+        if not self._action_row.controls or self._action_row.controls[0].text != "Volver al menú":
+            home_btn = secondary_button("Volver al menú", self._on_home)
+            # keep next button as second
+            self._action_row.controls = [home_btn, self._next_btn]
+        self._page.update()
 
     # ── Marcador ──────────────────────────────────────────────────────────────
 
@@ -554,6 +589,8 @@ class GameScreen(ft.Column):
         streak = repo.get_streak(self._session._player_id)
         player = repo.get_player_by_id(self._session._player_id)
         self._streak_text.value = f"🔥 {streak.current}"
+        self._timer_text.value = f"⏱ {self._elapsed_seconds}s"
+        self._lives_text.value = f"❤️ {self._session.lives_remaining}"
         lvl, xp_in, xp_needed = Scorer.level_from_xp(player.xp if player else 0)
         self._score_col.controls = [
             score_display(self._session.current_score),

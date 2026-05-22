@@ -65,6 +65,7 @@ class GameSession:
         method_key: str,
         difficulty: int,
         generator,          # cualquier BaseGenerator
+        max_lives: int = 3,
     ) -> None:
         self._player_id = player_id
         self._method_key = method_key
@@ -80,6 +81,8 @@ class GameSession:
         self._question_start: float = 0.0
         self._session_start: float = 0.0
         self._active: bool = False
+        self._max_lives: int = max_lives
+        self._lives_remaining: int = max_lives
 
     # ── Ciclo principal ───────────────────────────────────────────────────────
 
@@ -130,6 +133,10 @@ class GameSession:
             self._current_exercise.solver_result,
             context,
         )
+
+        # Vida perdida al fallar
+        if not validation.is_correct:
+            self._lives_remaining = max(0, self._lives_remaining - 1)
 
         # Puntuar
         score = self._scorer.calculate(
@@ -278,6 +285,10 @@ class GameSession:
     @property
     def questions_answered(self) -> int:
         return len(self._answers)
+
+    @property
+    def lives_remaining(self) -> int:
+        return self._lives_remaining
 
     # ── Logros ────────────────────────────────────────────────────────────────
 

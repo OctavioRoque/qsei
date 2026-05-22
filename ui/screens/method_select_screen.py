@@ -5,6 +5,7 @@ Pantalla de selección de método numérico y dificultad.
 """
 
 from __future__ import annotations
+import random
 from typing import Callable
 import flet as ft
 
@@ -13,20 +14,6 @@ from ui.themes.theme import (
     card, title_text, subtitle_text,
     primary_button, secondary_button,
 )
-
-_AVAILABLE_METHODS: dict[str, str] = {
-    "biseccion":        "Bisección",
-    "falsa_posicion":   "Falsa Posición",
-    "newton_raphson":   "Newton-Raphson",
-    "punto_fijo":       "Punto Fijo",
-    "secante":          "Secante",
-    "lagrange":         "Lagrange",
-    "interpolacion_lineal": "Interpolación Lineal",
-    "gauss_seidel":     "Gauss-Seidel",
-    "jacobi":           "Jacobi",
-    "euler_adelante":   "Euler Adelante",
-    "runge_kutta_4":    "Runge-Kutta 4",
-}
 
 # Verificar qué métodos tienen preguntas en el banco
 def _implemented_topics() -> set[str]:
@@ -57,31 +44,24 @@ class MethodSelectScreen(ft.Column):
         self._on_back = on_back
         self._page = page
 
-        self._selected_method: str = "biseccion"
         self._selected_difficulty: int = 1
         self._implemented = _implemented_topics()
 
-        self._method_buttons: dict[str, ft.Container] = {}
         self._diff_buttons: dict[int, ft.Container] = {}
         self._status_text = ft.Text("", color=Colors.ERROR, size=Typography.SIZE_XS)
 
         self._build()
 
     def _build(self) -> None:
-        method_cards = []
-        for key, label in _AVAILABLE_METHODS.items():
-            available = key in self._implemented
-            c = self._make_method_card(key, label, available)
-            self._method_buttons[key] = c
-            method_cards.append(c)
-
         methods_section = ft.Column([
-            ft.Text("Método Numérico", size=Typography.SIZE_MD,
+            ft.Text("Método Aleatorio", size=Typography.SIZE_MD,
                     weight=ft.FontWeight.BOLD, color=Colors.TEXT_PRIMARY),
-            ft.Text("Elige el método que deseas practicar",
-                    size=Typography.SIZE_XS, color=Colors.TEXT_SECONDARY),
-            ft.Container(height=Spacing.SM),
-            ft.Row(method_cards, wrap=True, spacing=Spacing.MD, run_spacing=Spacing.SM),
+            ft.Text(
+                "Se elegirá automáticamente un método disponible en cada sesión.",
+                size=Typography.SIZE_XS, color=Colors.TEXT_SECONDARY),
+            ft.Text(
+                f"Temas disponibles: {len(self._implemented)}",
+                size=Typography.SIZE_XS, color=Colors.TEXT_SECONDARY),
         ], spacing=Spacing.SM)
 
         diff_cards = []
@@ -112,7 +92,7 @@ class MethodSelectScreen(ft.Column):
                         ft.Text("🎓", size=48),
                         ft.Column([
                             title_text("Selecciona tu desafío", size=22),
-                            subtitle_text("Elige método y dificultad para comenzar"),
+                            subtitle_text("Método aleatorio y dificultad seleccionable"),
                         ], spacing=4),
                     ], spacing=Spacing.MD,
                        vertical_alignment=ft.CrossAxisAlignment.CENTER),
@@ -131,33 +111,7 @@ class MethodSelectScreen(ft.Column):
         ]
         self.expand = True
         self.spacing = 0
-        self._refresh_method_highlights()
         self._refresh_diff_highlights()
-
-    def _make_method_card(self, key: str, label: str, available: bool) -> ft.Container:
-        badge = ft.Container(
-            content=ft.Text("disponible" if available else "próximamente",
-                            size=10,
-                            color=Colors.SUCCESS if available else Colors.TEXT_MUTED),
-            bgcolor="#0D2E1A" if available else Colors.BG_SURFACE,
-            border_radius=Radius.SM,
-            padding=ft.Padding(left=6, top=2, right=6, bottom=2),
-        )
-        return ft.Container(
-            content=ft.Column([
-                ft.Text(label, size=Typography.SIZE_SM, weight=ft.FontWeight.BOLD,
-                        color=Colors.TEXT_PRIMARY if available else Colors.TEXT_MUTED),
-                badge,
-            ], spacing=Spacing.XS, horizontal_alignment=ft.CrossAxisAlignment.START),
-            width=180,
-            padding=ft.Padding(left=Spacing.MD, top=Spacing.MD,
-                               right=Spacing.MD, bottom=Spacing.MD),
-            border_radius=Radius.MD,
-            bgcolor=Colors.BG_CARD,
-            border=ft.border.all(1, Colors.BORDER),
-            on_click=(lambda e, k=key: self._select_method(k)) if available else None,
-            data=key,
-        )
 
     def _make_diff_card(self, d: dict) -> ft.Container:
         return ft.Container(
@@ -177,26 +131,11 @@ class MethodSelectScreen(ft.Column):
             data=d["value"],
         )
 
-    def _select_method(self, key: str) -> None:
-        self._selected_method = key
-        self._status_text.value = ""
-        self._refresh_method_highlights()
-        self._page.update()
-
     def _select_difficulty(self, value: int) -> None:
         self._selected_difficulty = value
         self._status_text.value = ""
         self._refresh_diff_highlights()
         self._page.update()
-
-    def _refresh_method_highlights(self) -> None:
-        for key, c in self._method_buttons.items():
-            if key == self._selected_method:
-                c.border = ft.border.all(2, Colors.PRIMARY)
-                c.bgcolor = "#0A1A35"
-            else:
-                c.border = ft.border.all(1, Colors.BORDER)
-                c.bgcolor = Colors.BG_CARD
 
     def _refresh_diff_highlights(self) -> None:
         for v, c in self._diff_buttons.items():
@@ -208,12 +147,14 @@ class MethodSelectScreen(ft.Column):
                 c.bgcolor = Colors.BG_CARD
 
     def _on_start(self, e: ft.ControlEvent) -> None:
-        if self._selected_method not in self._implemented:
-            self._status_text.value = "⚠️ Ese método aún no tiene preguntas en el banco."
+        if not self._implemented:
+            self._status_text.value = "⚠️ No hay temas disponibles en el banco de preguntas."
             self._page.update()
             return
+
+        topic = random.choice(sorted(self._implemented))
         self._on_start_session(
             self._player_id,
-            self._selected_method,
+            topic,
             self._selected_difficulty,
         )

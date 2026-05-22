@@ -77,6 +77,7 @@ class AppRouter:
         game = GameScreen(
             session=session,
             on_end_session=self._show_summary,
+            on_back_to_menu=self._show_home,
             page=self._page,
         )
         self._page.add(game)
