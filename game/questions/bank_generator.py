@@ -18,10 +18,17 @@ import random
 from dataclasses import replace
 
 from engine.utils.base_solver import ExerciseBundle
-from game.questions.question_bank import get_session_set, get
+from game.questions.question_bank import get_session_set, get, available_topics
 from game.questions.question_model import BankQuestion
 
 logger = logging.getLogger(__name__)
+
+# Temas excluidos del modo aleatorio
+_EXCLUDED_TOPICS = {"all", "analisis", "comparativas"}
+
+
+def _all_topics() -> list[str]:
+    return [t for t in available_topics() if t not in _EXCLUDED_TOPICS]
 
 
 class BankGenerator:
@@ -131,28 +138,38 @@ class BankGenerator:
 
     def _reload(self, difficulty: int) -> None:
         """Recarga el banco para una dificultad específica."""
-        new_qs = get_session_set(
-            topic=self._topic,
-            difficulty=difficulty,
-            total=self._total,
-            seed=self._seed,
-        )
+        topics = _all_topics() if self._topic == "all" else [self._topic]
+
+        new_qs: list[BankQuestion] = []
+        for topic in topics:
+            new_qs.extend(get_session_set(
+                topic=topic,
+                difficulty=difficulty,
+                total=max(3, self._total // len(topics)),
+                seed=self._seed,
+            ))
+
+        random.shuffle(new_qs)
+
         # Excluir ya usadas si hay suficientes nuevas
         fresh = [q for q in new_qs if q.id not in self._used_ids]
         if len(fresh) < 3:
-            # Banco casi agotado → resetear historial
             self._used_ids.clear()
             fresh = new_qs
 
         self._queue.extend(fresh)
         logger.info(
             "BankGenerator recargó %d preguntas (topic=%s diff=%d)",
-            len(fresh), self._topic, difficulty
+            len(fresh), self._topic, difficulty,
         )
 
     def _emergency_load(self) -> list[BankQuestion]:
-        """Carga de emergencia cuando el banco está vacío para cualquier dificultad."""
+        """Carga de emergencia cuando el banco está vacío."""
         logger.warning("BankGenerator: carga de emergencia para topic='%s'", self._topic)
-        qs = get(topic=self._topic, count=10)
-        self._queue = list(qs)
+        topics = _all_topics() if self._topic == "all" else [self._topic]
+        qs: list[BankQuestion] = []
+        for topic in topics:
+            qs.extend(get(topic=topic, count=5))
+        random.shuffle(qs)
+        self._queue = qs
         return self._queue

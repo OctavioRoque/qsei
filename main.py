@@ -237,6 +237,5 @@ def main(page: ft.Page) -> None:
     home = _BootstrapHomeScreen(router, page)
     page.add(home)
 
-
 if __name__ == "__main__":
     ft.app(target=main)

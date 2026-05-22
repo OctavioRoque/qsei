@@ -147,7 +147,11 @@ class GameScreen(ft.Column):
         self._question_area.controls.clear()
         header_row = [difficulty_badge(bundle.difficulty)]
 
-        method_label = bundle.method_key.replace("_", " ").title()
+        method_label = (
+            "🎲 Aleatorio"
+            if bundle.method_key == "all"
+            else bundle.method_key.replace("_", " ").title()
+        )
         header_row.append(ft.Text(
             f"📐 {method_label}",
             size=Typography.SIZE_XS, color=Colors.TEXT_SECONDARY))
