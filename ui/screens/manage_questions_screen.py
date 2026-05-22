@@ -65,7 +65,10 @@ class ManageQuestionsScreen(ft.Column):
                     title_text("Gestionar preguntas", size=22),
                     subtitle_text("Edita preguntas y respuestas directamente desde el banco."),
                 ], spacing=4),
-                secondary_button("← Volver", lambda _: self._on_back()),
+                ft.Row([
+                    primary_button("Nuevo tema", self._prompt_new_topic),
+                    secondary_button("← Volver", lambda _: self._on_back()),
+                ], spacing=8),
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -94,6 +97,38 @@ class ManageQuestionsScreen(ft.Column):
         self._selected_question = None
         self._build()
         self._page.update()
+
+    def _prompt_new_topic(self, e: ft.ControlEvent) -> None:
+        dlg = ft.AlertDialog(
+            title=ft.Text("Crear nuevo tema"),
+            content=ft.TextField(label="Clave del tema (sin espacios)", autofocus=True),
+            actions=[
+                ft.TextButton("Cancelar", on_click=lambda _: self._close_dialog()),
+                ft.ElevatedButton("Crear", on_click=lambda ev, d=dlg: self._create_topic(d)),
+            ],
+        )
+        self._page.dialog = dlg
+        dlg.open = True
+        self._page.update()
+
+    def _create_topic(self, dialog: ft.AlertDialog) -> None:
+        tf = dialog.content
+        key = (tf.value or "").strip()
+        if not key:
+            return
+        # crear archivo vacío
+        save_topic_questions(key, [])
+        self._close_dialog()
+        self._selected_topic = key
+        self._questions = []
+        self._selected_question = None
+        self._build()
+        self._page.update()
+
+    def _close_dialog(self) -> None:
+        if self._page.dialog:
+            self._page.dialog.open = False
+            self._page.update()
 
     def _select_question(self, question_id: str) -> None:
         self._selected_question = next((q for q in self._questions if q.id == question_id), None)
