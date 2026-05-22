@@ -64,11 +64,11 @@ class AppRouter:
         from game.sessions.session_manager import GameSession
         from ui.screens.game_screen import GameScreen
 
-        generator = BankGenerator(topic=method_key, total=15)
+        generator = BankGenerator(topic=None, total=15)
 
         session = GameSession(
             player_id=player_id,
-            method_key=method_key,
+            method_key="aleatorio",
             difficulty=difficulty,
             generator=generator,
         )

@@ -18,7 +18,11 @@ import random
 from dataclasses import replace
 
 from engine.utils.base_solver import ExerciseBundle
-from game.questions.question_bank import get_session_set, get
+from game.questions.question_bank import (
+    get_session_set,
+    get,
+    get_random_questions,
+)
 from game.questions.question_model import BankQuestion
 
 logger = logging.getLogger(__name__)
@@ -33,14 +37,15 @@ class BankGenerator:
 
     Parámetros
     ----------
-    topic    : Clave del método/tema, e.g. "biseccion"
+    topic    : Clave del método/tema, e.g. "biseccion". Si es None, usa preguntas
+               de todos los temas en mezclas aleatorias.
     total    : Preguntas a pre-cargar por sesión (default 15)
     seed     : Semilla aleatoria (None = sin fijar)
     """
 
     def __init__(
         self,
-        topic: str,
+        topic: str | None = None,
         total: int = 15,
         seed: int | None = None,
     ) -> None:

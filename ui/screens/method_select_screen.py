@@ -152,9 +152,8 @@ class MethodSelectScreen(ft.Column):
             self._page.update()
             return
 
-        topic = random.choice(sorted(self._implemented))
         self._on_start_session(
             self._player_id,
-            topic,
+            "aleatorio",
             self._selected_difficulty,
         )

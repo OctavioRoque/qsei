@@ -119,8 +119,42 @@ def get(
     return pool[:count]
 
 
+def _load_all_topics() -> list[BankQuestion]:
+    """Carga todas las preguntas de todos los temas disponibles."""
+    questions: list[BankQuestion] = []
+    for topic in available_topics():
+        questions.extend(_load_topic(topic))
+    return questions
+
+
+def get_random_questions(
+    difficulty: int | None = None,
+    count: int = 5,
+    seed: int | None = None,
+) -> list[BankQuestion]:
+    """
+    Obtiene preguntas aleatorias de todos los temas.
+
+    Si no hay suficientes preguntas para la dificultad solicitada,
+    rellena con preguntas de cualquier dificultad.
+    """
+    pool = _load_all_topics()
+    if difficulty is not None:
+        filtered = [q for q in pool if q.difficulty == difficulty]
+        if filtered:
+            pool = filtered
+        else:
+            logger.warning(
+                "No hay preguntas de dificultad %s en todos los temas, usando todas",
+                difficulty,
+            )
+    rng = random.Random(seed)
+    rng.shuffle(pool)
+    return pool[:count]
+
+
 def get_session_set(
-    topic: str,
+    topic: str | None,
     difficulty: int,
     total: int = 10,
     seed: int | None = None,
@@ -128,30 +162,21 @@ def get_session_set(
     """
     Arma un set de preguntas equilibrado para una sesión completa.
 
-    Distribución aproximada:
-    - 50% preguntas abiertas / conceptuales
-    - 30% tabulación (si hay suficientes)
-    - 20% prerequisito / análisis
-
-    Si el banco no tiene suficientes de un tipo, rellena con otros.
-
-    Parámetros
-    ----------
-    topic      : Método numérico
-    difficulty : 1, 2 o 3
-    total      : Número total de preguntas en la sesión
-    seed       : Semilla aleatoria
+    Si `topic` es None, selecciona preguntas de todos los temas.
     """
-    all_qs = _load_topic(topic)
-    pool = [q for q in all_qs if q.difficulty == difficulty]
+    if topic is None:
+        pool = get_random_questions(difficulty=difficulty, count=total * 3, seed=seed)
+    else:
+        all_qs = _load_topic(topic)
+        pool = [q for q in all_qs if q.difficulty == difficulty]
 
-    if not pool:
-        # Fallback: cualquier dificultad del mismo tema
-        pool = list(all_qs)
-        logger.warning(
-            "No hay preguntas de dificultad %d para '%s', usando todas",
-            difficulty, topic
-        )
+        if not pool:
+            # Fallback: cualquier dificultad del mismo tema
+            pool = list(all_qs)
+            logger.warning(
+                "No hay preguntas de dificultad %d para '%s', usando todas",
+                difficulty, topic
+            )
 
     rng = random.Random(seed)
     rng.shuffle(pool)
