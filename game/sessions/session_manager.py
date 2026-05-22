@@ -105,6 +105,48 @@ class GameSession:
         self._question_start = time.time()
         return self._current_exercise
 
+    def skip_as_correct(self) -> tuple[ValidationResult, ScoreBreakdown]:
+        """Carta Rayo: omite la pregunta actual contándola como correcta."""
+        assert self._active and self._current_exercise is not None
+        time_taken = time.time() - self._question_start
+        streak = self._repo.get_streak(self._player_id)
+
+        validation = ValidationResult(
+            is_correct=True, precision_score=1.0,
+            student_value=None, expected_value=None,
+            absolute_error=0.0,
+            feedback="⚡ Carta Rayo — pregunta omitida como correcta",
+        )
+        score = self._scorer.calculate(
+            validation, self._difficulty, time_taken, streak.current)
+        self._repo.update_streak(self._player_id, True)
+
+        import json as _json
+        self._db.execute(
+            """INSERT INTO answers
+               (session_id, question_hash, exercise_type, method_key, difficulty,
+                is_correct, student_answer, correct_answer, time_seconds, score_earned)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (self._session_id, self._current_exercise.hash,
+             self._current_exercise.exercise_type, self._current_exercise.method_key,
+             self._difficulty, 1, '"⚡_rayo"',
+             _json.dumps(str(self._current_exercise.correct_answer)),
+             round(time_taken, 2), score.total),
+        )
+        record = AnswerRecord(
+            exercise=self._current_exercise, validation=validation,
+            score=score, time_seconds=time_taken,
+            streak_at_answer=streak.current + 1,
+        )
+        self._answers.append(record)
+        return validation, score
+
+    def restore_life(self) -> int:
+        """Carta Trofeo: devuelve una vida. Retorna el total actual."""
+        if self._lives_remaining < self._max_lives:
+            self._lives_remaining += 1
+        return self._lives_remaining
+
     def answer(
         self,
         student_answer: Any,

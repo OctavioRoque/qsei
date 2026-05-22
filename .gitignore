@@ -1,0 +1,7 @@
+# Ignorar cache de Python
+__pycache__/
+*.pyc
+
+# Ignorar bases de datos locales y archivos de guardado
+*.db
+saves/
