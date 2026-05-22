@@ -182,17 +182,31 @@ def secondary_button(text: str, on_click, icon: str | None = None) -> ft.Outline
     )
 
 
-def difficulty_badge(difficulty: int) -> ft.Container:
-    """Badge de color según dificultad."""
+def difficulty_badge(difficulty: int, display_number: int | None = None) -> ft.Container:
+    """Badge de color según dificultad.
+
+    Si `display_number` está presente, se mostrará ese número entre paréntesis
+    en lugar del valor de `difficulty`. Esto permite usar el mismo badge como
+    pista sutil de la opción correcta.
+    """
     from config import get_difficulty_label
     level = get_difficulty_label(difficulty)
+    number_text = display_number if display_number is not None else difficulty
     return ft.Container(
-        content=ft.Text(
-            f"{level.label_es} ({difficulty})",
-            size=Typography.SIZE_XS,
-            weight=ft.FontWeight.BOLD,
-            color=Colors.BG_DARK,
-        ),
+        content=ft.Row([
+            ft.Text(
+                level.label_es,
+                size=Typography.SIZE_XS,
+                weight=ft.FontWeight.BOLD,
+                color=Colors.BG_DARK,
+            ),
+            ft.Text(
+                f"({number_text})",
+                size=10,
+                weight=ft.FontWeight.BOLD,
+                color="#000000",
+            ),
+        ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
         bgcolor=level.color_hex,
         padding=ft.Padding(left=10, top=4, right=10, bottom=4),
         border_radius=Radius.XL,

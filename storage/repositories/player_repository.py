@@ -121,7 +121,10 @@ class PlayerRepository:
             "UPDATE players SET games_played = games_played + 1 WHERE id = ?",
             (player_id,),
         )
-
+    def reset_all_scores(self) -> None:
+        """Elimina todos los perfiles de jugadores y sus datos asociados."""
+        with self._db.connection() as conn:
+            conn.execute("DELETE FROM players")
     # ── Estadísticas por método ───────────────────────────────────────────────
 
     def get_method_stats(self, player_id: int, method_key: str) -> MethodStats | None:

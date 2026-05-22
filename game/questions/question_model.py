@@ -78,6 +78,18 @@ class BankQuestion:
             steps=[],
         )
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "topic": self.topic,
+            "difficulty": self.difficulty,
+            "type": self.type,
+            "tags": self.tags,
+            "question": self.question,
+            "solution": self.solution,
+            "procedure": self.procedure,
+        }
+
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> "BankQuestion":
         return cls(

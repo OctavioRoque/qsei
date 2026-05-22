@@ -33,6 +33,9 @@ _cache: dict[str, list[BankQuestion]] = {}
 # Mapa de dificultad del juego (1-3) → nivel numérico
 _DIFF_LABELS = {1: "Fácil", 2: "Media", 3: "Difícil"}
 
+# Tipos del banco que se pueden convertir a opción múltiple.
+_MC_ELIGIBLE = {"open", "prerequisite"}
+
 
 def _load_topic(topic: str) -> list[BankQuestion]:
     """Carga (o devuelve del caché) todas las preguntas de un tema."""
@@ -74,6 +77,21 @@ def count(topic: str, difficulty: int | None = None) -> int:
     if difficulty is not None:
         qs = [q for q in qs if q.difficulty == difficulty]
     return len(qs)
+
+
+def load_topic_questions(topic: str) -> list[BankQuestion]:
+    """Carga preguntas de un tema para edición."""
+    return _load_topic(topic)
+
+
+def save_topic_questions(topic: str, questions: list[BankQuestion]) -> None:
+    """Guarda preguntas editadas en el JSON del tema."""
+    path = _ASSETS_DIR / f"{topic}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    data = [q.to_dict() for q in questions]
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    _cache[topic] = questions
+    logger.info("Banco '%s' guardado con %d preguntas", topic, len(questions))
 
 
 def get(
@@ -138,7 +156,7 @@ def get_random_questions(
     Si no hay suficientes preguntas para la dificultad solicitada,
     rellena con preguntas de cualquier dificultad.
     """
-    pool = _load_all_topics()
+    pool = [q for q in _load_all_topics() if q.type in _MC_ELIGIBLE]
     if difficulty is not None:
         filtered = [q for q in pool if q.difficulty == difficulty]
         if filtered:
@@ -160,7 +178,7 @@ def get_session_set(
     seed: int | None = None,
 ) -> list[BankQuestion]:
     """
-    Arma un set de preguntas equilibrado para una sesión completa.
+    Arma un set de preguntas de opción múltiple para una sesión completa.
 
     Si `topic` es None, selecciona preguntas de todos los temas.
     """
@@ -168,50 +186,21 @@ def get_session_set(
         pool = get_random_questions(difficulty=difficulty, count=total * 3, seed=seed)
     else:
         all_qs = _load_topic(topic)
-        pool = [q for q in all_qs if q.difficulty == difficulty]
+        pool = [
+            q for q in all_qs
+            if q.difficulty == difficulty and q.type in _MC_ELIGIBLE
+        ]
 
         if not pool:
-            # Fallback: cualquier dificultad del mismo tema
-            pool = list(all_qs)
+            pool = [q for q in all_qs if q.type in _MC_ELIGIBLE]
             logger.warning(
-                "No hay preguntas de dificultad %d para '%s', usando todas",
+                "No hay preguntas de dificultad %d para '%s', usando preguntas MC de todas las dificultades",
                 difficulty, topic
             )
 
     rng = random.Random(seed)
     rng.shuffle(pool)
-
-    # Dividir por tipo
-    by_type: dict[str, list[BankQuestion]] = {
-        "open": [],
-        "tabulation": [],
-        "prerequisite": [],
-        "analysis": [],
-    }
-    for q in pool:
-        by_type.setdefault(q.type, []).append(q)
-
-    # Cuotas
-    want_tab   = max(1, round(total * 0.30))
-    want_pre   = max(1, round(total * 0.15))
-    want_ana   = max(1, round(total * 0.05))
-    want_open  = total - want_tab - want_pre - want_ana
-
-    selected: list[BankQuestion] = []
-    selected += by_type["tabulation"][:want_tab]
-    selected += by_type["prerequisite"][:want_pre]
-    selected += by_type["analysis"][:want_ana]
-    selected += by_type["open"][:want_open]
-
-    # Rellenar si hay déficit
-    remaining = total - len(selected)
-    if remaining > 0:
-        used_ids = {q.id for q in selected}
-        extras = [q for q in pool if q.id not in used_ids]
-        selected += extras[:remaining]
-
-    rng.shuffle(selected)
-    return selected[:total]
+    return pool[:total]
 
 
 def get_by_id(question_id: str) -> BankQuestion | None:
@@ -256,6 +245,16 @@ def get_distractors(
     if len(candidates) < count:
         candidates = [
             q.solution for q in pool
+            if q.id != question.id
+            and len(q.solution) < 350
+            and q.solution.strip()
+        ]
+
+    # Si aún no hay suficientes, ampliar a todo el banco
+    if len(candidates) < count:
+        all_pool = _load_all_topics()
+        candidates = [
+            q.solution for q in all_pool
             if q.id != question.id
             and len(q.solution) < 350
             and q.solution.strip()

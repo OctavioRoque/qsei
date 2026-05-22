@@ -82,7 +82,12 @@ class GameSession:
         self._session_start: float = 0.0
         self._active: bool = False
         self._max_lives: int = max_lives
+        self._max_questions: int = 16  # Maximum number of questions in the session
         self._lives_remaining: int = max_lives
+        self._base_difficulty: int = difficulty  # Base difficulty for the session
+        self._difficulty: int = difficulty  # Current difficulty level
+        self._base_difficulty: int = difficulty
+        self._difficulty: int = difficulty
 
     # ── Ciclo principal ───────────────────────────────────────────────────────
 
@@ -92,7 +97,7 @@ class GameSession:
         self._session_id = self._db.execute(
             """INSERT INTO sessions (player_id, method_key, difficulty)
                VALUES (?, ?, ?)""",
-            (self._player_id, self._method_key, self._difficulty),
+            (self._player_id, self._method_key, self._base_difficulty),
         )
         self._active = True
         logger.info("Sesión iniciada: id=%d player=%d method=%s",
@@ -101,6 +106,8 @@ class GameSession:
 
     def next_question(self) -> ExerciseBundle:
         """Genera y devuelve el siguiente ejercicio."""
+        assert self.questions_answered < self._max_questions, "No quedan preguntas en esta sesión."
+        self._difficulty = self._difficulty_for_next_question()  # Update difficulty for the next question
         self._current_exercise = self._generator.generate(self._difficulty)
         self._question_start = time.time()
         return self._current_exercise
@@ -240,7 +247,7 @@ class GameSession:
 
         # Verificar récord
         new_record = self._repo.update_record(
-            self._player_id, self._method_key, self._difficulty,
+            self._player_id, self._method_key, self._base_difficulty,
             total_score, avg_time,
         )
         new_records = [f"{self._method_key} dif.{self._difficulty}"] if new_record else []
@@ -257,7 +264,7 @@ class GameSession:
             session_id=self._session_id,
             player_id=self._player_id,
             method_key=self._method_key,
-            difficulty=self._difficulty,
+            difficulty=self._base_difficulty,
             total_score=total_score,
             xp_earned=xp_earned,
             questions_total=total_count,
@@ -318,5 +325,12 @@ class GameSession:
             if condition:
                 if self._repo.unlock_achievement(self._player_id, key):
                     unlocked.append(key)
-
         return unlocked
+
+    def _difficulty_for_next_question(self) -> int:
+        """Calcula la dificultad para la siguiente pregunta."""
+        return min(3, self._base_difficulty + self.questions_answered // 5)
+
+    @property
+    def max_questions(self) -> int:
+        return self._max_questions

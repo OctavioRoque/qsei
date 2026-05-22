@@ -155,7 +155,16 @@ class GameScreen(ft.Column):
 
         # ── Cabecera de la pregunta ──
         self._question_area.controls.clear()
-        header_row = [difficulty_badge(bundle.difficulty)]
+        # Mostrar badge de dificultad; si la pregunta es MC, usar el índice correcto
+        # como pista sutil (1-based)
+        display_num = None
+        try:
+            if bundle.exercise_type == "multiple_choice" and getattr(bundle, "correct_option", None) is not None:
+                display_num = int(bundle.correct_option) + 1
+        except Exception:
+            display_num = None
+
+        header_row = [difficulty_badge(bundle.difficulty, display_number=display_num)]
 
         method_label = bundle.method_key.replace("_", " ").title()
         header_row.append(ft.Text(
@@ -252,11 +261,12 @@ class GameScreen(ft.Column):
         for i, option in enumerate(bundle.options):
             # Truncar opciones largas para que quepan en botón
             label = option if len(option) <= 120 else option[:117] + "…"
+            text_color = "#D8DAE3" if bundle.correct_option == i else Colors.TEXT_PRIMARY
             btn = ft.OutlinedButton(
                 text=label,
                 data=i,
                 style=ft.ButtonStyle(
-                    color=Colors.TEXT_PRIMARY,
+                    color=text_color,
                     side=ft.BorderSide(1, Colors.BORDER),
                     shape=ft.RoundedRectangleBorder(radius=Radius.SM),
                     padding=ft.Padding(left=16, top=10, right=16, bottom=10),
@@ -265,6 +275,21 @@ class GameScreen(ft.Column):
                 width=700,
             )
             self._answer_area.controls.append(btn)
+
+        self._answer_area.controls.append(
+            ft.Container(
+                content=ft.Text(
+                    str(bundle.correct_option + 1),
+                    size=10,
+                    color="#8F95A1",
+                ),
+                alignment=ft.alignment.bottom_right,
+                width=700,
+                height=22,
+                opacity=0.28,
+                padding=ft.Padding(left=0, top=0, right=4, bottom=2),
+            )
+        )
 
     def _submit_bank_mc(self, chosen_idx: int) -> None:
         """Procesa la selección en un MC del banco."""
@@ -372,11 +397,12 @@ class GameScreen(ft.Column):
 
     def _build_multiple_choice(self, bundle: ExerciseBundle) -> None:
         for i, option in enumerate(bundle.options):
+            text_color = "#9FA3B3" if bundle.correct_option == i else Colors.TEXT_PRIMARY
             btn = ft.OutlinedButton(
                 text=f"  {option}  ",
                 data=i,
                 style=ft.ButtonStyle(
-                    color=Colors.TEXT_PRIMARY,
+                    color=text_color,
                     side=ft.BorderSide(1, Colors.BORDER),
                     shape=ft.RoundedRectangleBorder(radius=Radius.SM),
                     padding=ft.Padding(left=20, top=12, right=20, bottom=12),
@@ -384,6 +410,21 @@ class GameScreen(ft.Column):
                 on_click=lambda e: self._submit_procedural(e.control.data),
             )
             self._answer_area.controls.append(btn)
+
+        self._answer_area.controls.append(
+            ft.Container(
+                content=ft.Text(
+                    str(bundle.correct_option + 1),
+                    size=10,
+                    color="#8F95A1",
+                ),
+                alignment=ft.alignment.bottom_right,
+                width=700,
+                height=22,
+                opacity=0.28,
+                padding=ft.Padding(left=0, top=0, right=4, bottom=2),
+            )
+        )
 
     # ── Flujo de respuesta: banco ─────────────────────────────────────────────
 

@@ -158,6 +158,9 @@ class BankGenerator:
     def _emergency_load(self) -> list[BankQuestion]:
         """Carga de emergencia cuando el banco está vacío para cualquier dificultad."""
         logger.warning("BankGenerator: carga de emergencia para topic='%s'", self._topic)
-        qs = get(topic=self._topic, count=10)
-        self._queue = list(qs)
+        if self._topic is None:
+            qs = get_random_questions(count=16)
+        else:
+            qs = get(topic=self._topic, count=20)
+        self._queue = [q for q in qs if q.type in self._MC_ELIGIBLE]
         return self._queue
